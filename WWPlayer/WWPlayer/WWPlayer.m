@@ -315,23 +315,31 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     [self.playButton addTarget:self action:@selector(playButtonActionCallBack:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.playButton];
     
+    // progress container 
     self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 20, self.bounds.size.width - 70 - 70, 15)];
     self.progressContainerView.backgroundColor = [UIColor purpleColor];
     [self addSubview:self.progressContainerView];
     
+    // loaded view
     self.loadedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, self.progressContainerView.frame.size.height)];
     self.loadedView.backgroundColor = [UIColor redColor];
     [self addSubview:self.loadedView];
     
+    // played view
     self.playedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, self.progressContainerView.frame.size.height)];
     self.playedView.backgroundColor = [UIColor blueColor];
     [self addSubview:self.playedView];
     
+    // drag idot
     self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x - 15, self.progressContainerView.frame.origin.y - 10, 30, 30)];
     self.idotImageView.layer.cornerRadius = 15.0;
     self.idotImageView.clipsToBounds = true;
     self.idotImageView.backgroundColor = [UIColor yellowColor];
     [self addSubview:self.idotImageView];
+}
+
+- (void)pSetupDragAction {
+    
 }
 
 - (void)playButtonActionCallBack:(UIButton *)button {

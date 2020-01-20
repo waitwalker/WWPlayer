@@ -100,9 +100,8 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
         if (array.count > 0) {
             // 本次缓冲时间范围
             CMTimeRange timeRange = [array.firstObject CMTimeRangeValue];
-            float startSeconds = CMTimeGetSeconds(timeRange.start);
+            //float startSeconds = CMTimeGetSeconds(timeRange.start);
             float loadedDurationSeconds = CMTimeGetSeconds(timeRange.duration);
-            NSLog(@"start load seconds:%f,duration load seconds:%f",startSeconds,loadedDurationSeconds);
             self.playerBar.totalLoadedTime = loadedDurationSeconds;
             NSInteger durationTime = self.avPlayer.currentItem.duration.value / self.avPlayer.currentItem.duration.timescale;
             self.playerBar.totalDuration = durationTime;
@@ -173,7 +172,6 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 */
 - (void)pSetupActivity {
     self.activityView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
-    NSLog(@"self.centerX:%f  self.centerY:%f",self.center.x,self.center.y);
     self.activityView.center = CGPointMake(self.bounds.size.width / 2.0, self.bounds.size.height / 2.0);
     [self addSubview:self.activityView];
 }
@@ -261,6 +259,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [[UIColor orangeColor]colorWithAlphaComponent:0.3];
         [self pSetupSubviews];
+        [self pSetupDragAction];
     }
     return self;
 }
@@ -277,7 +276,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 - (void)setTotalLoadedTime:(float)totalLoadedTime {
     _totalLoadedTime = totalLoadedTime;
     if (_totalDuration > 0) {
-        self.loadedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, self.progressContainerView.frame.size.height);
+        self.loadedView.frame = CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, self.progressContainerView.bounds.size.height);
     }
 }
 
@@ -291,8 +290,8 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 
         CGFloat progress = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
         CGFloat width = progress * self.progressContainerView.frame.size.width;
-        self.playedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, width, self.progressContainerView.frame.size.height);
-        self.idotImageView.frame = CGRectMake(self.progressContainerView.frame.origin.x + width - 15, self.progressContainerView.frame.origin.y - 10, 30, 30);
+        self.playedView.frame = CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, width, self.progressContainerView.bounds.size.height);
+        self.idotImageView.frame = CGRectMake(self.progressContainerView.bounds.origin.x + width - 15, self.progressContainerView.bounds.origin.y - 10, 30, 30);
     }
 }
 
@@ -321,25 +320,55 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     [self addSubview:self.progressContainerView];
     
     // loaded view
-    self.loadedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, self.progressContainerView.frame.size.height)];
+    self.loadedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, 0, self.progressContainerView.frame.size.height)];
     self.loadedView.backgroundColor = [UIColor redColor];
-    [self addSubview:self.loadedView];
+    [self.progressContainerView addSubview:self.loadedView];
     
     // played view
-    self.playedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, self.progressContainerView.frame.size.height)];
+    self.playedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, 0, self.progressContainerView.frame.size.height)];
     self.playedView.backgroundColor = [UIColor blueColor];
-    [self addSubview:self.playedView];
+    [self.progressContainerView addSubview:self.playedView];
     
     // drag idot
-    self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x - 15, self.progressContainerView.frame.origin.y - 10, 30, 30)];
+    self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x - 10, self.progressContainerView.bounds.origin.y - 10, 30, 30)];
     self.idotImageView.layer.cornerRadius = 15.0;
     self.idotImageView.clipsToBounds = true;
+    self.idotImageView.userInteractionEnabled = true;
     self.idotImageView.backgroundColor = [UIColor yellowColor];
-    [self addSubview:self.idotImageView];
+    [self.progressContainerView addSubview:self.idotImageView];
 }
 
+/**
+* @description init drag
+* @author waitwalker
+* @date 2020.1.20
+* @parameter 
+*/
 - (void)pSetupDragAction {
+    UIPanGestureRecognizer *panGes = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panActionCallBack:)];
+    panGes.maximumNumberOfTouches = 1;
+    panGes.minimumNumberOfTouches = 1;
+    [self.idotImageView addGestureRecognizer:panGes];
+}
+
+- (void)panActionCallBack:(UIPanGestureRecognizer *)panGes {
+    //获取偏移量
+    CGFloat moveX = [panGes translationInView:self].x;
     
+    NSLog(@"偏移量: %f",moveX);
+    
+    //重置偏移量，避免下次获取到的是原基础的增量
+    [panGes setTranslation:CGPointMake(0, 0) inView:self];
+    
+    CGFloat centerX = _idotImageView.centerX + moveX;
+    if (centerX < 10) centerX = 10;
+    if (centerX > self.bounds.size.width - 10) centerX = self.progressContainerView.bounds.size.width - 10;
+    _idotImageView.centerX = centerX;
+    if (_idotImageView.centerX < 10) {
+        _idotImageView.centerX = 10;
+    }else if (_idotImageView.centerX > self.progressContainerView.bounds.size.width - 10) {
+        _idotImageView.centerX = self.progressContainerView.bounds.size.width - 10;
+    }
 }
 
 - (void)playButtonActionCallBack:(UIButton *)button {
@@ -355,5 +384,127 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     }
 }
 
+
+@end
+
+@implementation UIView (Category)
+- (CGFloat)frameX {
+    return self.frame.origin.x;
+}
+
+- (void)setFrameX:(CGFloat)newX
+{
+    self.frame = CGRectMake(newX, self.frame.origin.y, self.frame.size.width, self.frame.size.height);
+}
+
+- (CGFloat)frameY
+{
+    return self.frame.origin.y;
+}
+
+- (void)setFrameY:(CGFloat)newY
+{
+    self.frame = CGRectMake(self.frame.origin.x, newY, self.frame.size.width, self.frame.size.height);
+}
+
+- (CGFloat)frameWidth
+{
+    return self.frame.size.width;
+}
+
+- (void)setFrameWidth:(CGFloat)newWidth
+{
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, newWidth, self.frame.size.height);
+}
+
+- (CGFloat)frameHeight
+{
+    return self.frame.size.height;
+}
+
+- (void)setFrameHeight:(CGFloat)newHeight
+{
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, self.frame.size.width, newHeight);
+}
+
+- (CGPoint)frameOrigin
+{
+    return self.frame.origin;
+}
+
+- (void)setFrameOrigin:(CGPoint)newOrigin
+{
+    self.frame = CGRectMake(newOrigin.x, newOrigin.y, self.frame.size.width, self.frame.size.height);
+}
+
+- (CGSize)frameSize
+{
+    return self.frame.size;
+}
+
+- (void)setFrameSize:(CGSize)newSize
+{
+    self.frame = CGRectMake(self.frame.origin.x, self.frame.origin.y, newSize.width, newSize.height);
+}
+
+- (CGFloat)boundsX
+{
+    return self.bounds.origin.x;
+}
+
+- (void)setBoundsX:(CGFloat)newX
+{
+    self.bounds = CGRectMake(newX, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
+}
+
+- (CGFloat)boundsY
+{
+    return self.bounds.origin.y;
+}
+
+- (void)setBoundsY:(CGFloat)newY
+{
+    self.bounds = CGRectMake(self.bounds.origin.x, newY, self.bounds.size.width, self.bounds.size.height);
+}
+
+- (CGFloat)boundsWidth
+{
+    return self.bounds.size.width;
+}
+
+- (void)setBoundsWidth:(CGFloat)newWidth
+{
+    self.bounds = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, newWidth, self.bounds.size.height);
+}
+
+- (CGFloat)boundsHeight
+{
+    return self.bounds.size.height;
+}
+
+- (void)setBoundsHeight:(CGFloat)newHeight
+{
+    self.bounds = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, newHeight);
+}
+
+- (CGFloat)centerX
+{
+    return self.center.x;
+}
+
+- (void)setCenterX:(CGFloat)newX
+{
+    self.center = CGPointMake(newX, self.center.y);
+}
+
+- (CGFloat)centerY
+{
+    return self.center.y;
+}
+
+- (void)setCenterY:(CGFloat)newY
+{
+    self.center = CGPointMake(self.center.x, newY);
+}
 
 @end

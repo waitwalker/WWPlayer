@@ -163,17 +163,6 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     [self addSubview:self.activityView];
 }
 
-- (void)dealloc {
-    if (self.avPlayer) {
-        [self.avPlayer pause];
-        self.avPlayer = nil;
-    }
-    
-    if (self.activityView) {
-        self.activityView = nil;
-    }
-}
-
 // MARK: public methods
 - (void)play {
     if (self && self.avPlayer) {
@@ -209,6 +198,28 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     } else {
         NSLog(@"播放按钮回调数据有问题");
     }
+}
+
+/**
+* @description dealloc resource
+* @author waitwalker
+* @date 2020.1.20
+* @parameter 
+*/
+- (void)dealloc {
+    if (self.avPlayer) {
+        [self.avPlayer pause];
+        self.avPlayer = nil;
+    }
+    
+    if (self.activityView) {
+        self.activityView = nil;
+    }
+    
+    [self.avPlayer.currentItem removeObserver:self forKeyPath:@"status"];
+    [self.avPlayer.currentItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
+    [self.avPlayer.currentItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
+    [self.avPlayer.currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
 }
 
 @end

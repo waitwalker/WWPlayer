@@ -61,6 +61,8 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     
     // 监听缓冲是否可以播放
     [self.avPlayer.currentItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
+    
+    // 当前播放时间监听
     __weak __typeof(self) weakSelf = self;
     [self.avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:nil usingBlock:^(CMTime time) {
         __strong __typeof(weakSelf) strongSelf = weakSelf; 
@@ -99,9 +101,12 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
             // 本次缓冲时间范围
             CMTimeRange timeRange = [array.firstObject CMTimeRangeValue];
             float startSeconds = CMTimeGetSeconds(timeRange.start);
-            float durationSeconds = CMTimeGetSeconds(timeRange.duration);
-            NSLog(@"start load seconds:%f,duration load seconds:%f",startSeconds,durationSeconds);
-            self.playerBar.totalLoadedTime = durationSeconds;
+            float loadedDurationSeconds = CMTimeGetSeconds(timeRange.duration);
+            NSLog(@"start load seconds:%f,duration load seconds:%f",startSeconds,loadedDurationSeconds);
+            self.playerBar.totalLoadedTime = loadedDurationSeconds;
+            NSInteger durationTime = self.avPlayer.currentItem.duration.value / self.avPlayer.currentItem.duration.timescale;
+            self.playerBar.totalDuration = durationTime;
+            
         }
     } else if ([keyPath isEqualToString:@"playbackBufferEmpty"]) {
         NSLog(@"正在加载");
@@ -246,6 +251,11 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 @end
 
 @implementation WWPlayerBar
+
+@synthesize totalDuration = _totalDuration;
+@synthesize currentTime = _currentTime;
+@synthesize totalLoadedTime = _totalLoadedTime;
+
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [[UIColor orangeColor]colorWithAlphaComponent:0.3];
@@ -255,17 +265,37 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 }
 
 // MARK: setter
+- (void)setTotalDuration:(NSInteger)totalDuration {
+    _totalDuration = totalDuration;
+    NSLog(@"播放总时间: %ld",(long)totalDuration);
+}
+
+- (NSInteger)totalDuration {
+    return _totalDuration;
+}
+
 - (void)setTotalLoadedTime:(float)totalLoadedTime {
+    _totalLoadedTime = totalLoadedTime;
     NSLog(@"缓冲的总时长:%f",totalLoadedTime);
+    if (_totalDuration > 0) {
+        NSLog(@"(totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width:%f",(totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width);
+        self.loadedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, 40);
+    }
+}
+
+- (float)totalLoadedTime {
+    return _totalLoadedTime;
 }
 
 - (void)setCurrentTime:(NSInteger)currentTime {
+    _currentTime = currentTime;
     NSLog(@"当前播放时间: %ld",(long)currentTime);
 }
 
-- (void)setTotalDuration:(NSInteger)totalDuration {
-    NSLog(@"播放总时间: %ld",(long)totalDuration);
+- (NSInteger)currentTime {
+    return _currentTime;
 }
+
 
 /**
  * @description init subviews

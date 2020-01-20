@@ -276,7 +276,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 - (void)setTotalLoadedTime:(float)totalLoadedTime {
     _totalLoadedTime = totalLoadedTime;
     if (_totalDuration > 0) {
-        self.loadedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, 40);
+        self.loadedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, self.progressContainerView.frame.size.height);
     }
 }
 
@@ -287,9 +287,10 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 - (void)setCurrentTime:(NSInteger)currentTime {
     _currentTime = currentTime;
     if (_totalDuration > 0) {
+
         CGFloat progress = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
-        CGFloat width = progress * self.progressContainerView.bounds.size.width;
-        self.playedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, width, 40);
+        CGFloat width = progress * self.progressContainerView.frame.size.width;
+        self.playedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, width, self.progressContainerView.frame.size.height);
     }
 }
 
@@ -312,15 +313,15 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     [self.playButton addTarget:self action:@selector(playButtonActionCallBack:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.playButton];
     
-    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 5, self.bounds.size.width - 70 - 70, 40)];
+    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 20, self.bounds.size.width - 70 - 70, 15)];
     self.progressContainerView.backgroundColor = [UIColor purpleColor];
     [self addSubview:self.progressContainerView];
     
-    self.loadedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, 40)];
+    self.loadedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, self.progressContainerView.frame.size.height)];
     self.loadedView.backgroundColor = [UIColor redColor];
     [self addSubview:self.loadedView];
     
-    self.playedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, 40)];
+    self.playedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, self.progressContainerView.frame.size.height)];
     self.playedView.backgroundColor = [UIColor blueColor];
     [self addSubview:self.playedView];
 }

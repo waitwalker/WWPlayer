@@ -11,11 +11,14 @@
 @interface WWPlayer()<WWPlayerBarDelegate>
 @property (nonatomic, strong) WWPlayerBar *playerBar;
 @property (nonatomic, strong) AVPlayer *avPlayer;
-
 @end
 
-@implementation WWPlayer
+// play status:play
+static NSString * const kPlayStatusPlay = @"kPlayStatusPlay";
+// play status:pause
+static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 
+@implementation WWPlayer
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor blackColor];
@@ -26,6 +29,13 @@
     return self;
 }
 
+// MARK: private methods
+/**
+ * @description setup player
+ * @author waitwalker
+ * @date 2020.1.20
+ * @parameter 
+ */
 - (void)pSetupPlayer {
     //http://cdn5.hd.etiantian.net/616d59dd8830d7b200a4a711062b9b89/5E257B44/etthd/msgz002041/400.mp4
     
@@ -39,12 +49,24 @@
     [self.avPlayer play];
 }
 
+/**
+* @description setup player bar
+* @author waitwalker
+* @date 2020.1.20
+* @parameter 
+*/
 - (void)pSetupPlayerBar {
     self.playerBar = [[WWPlayerBar alloc]initWithFrame:CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50)];
     self.playerBar.delegate = self;
     [self addSubview:self.playerBar];
 }
 
+/**
+* @description setup player tap action
+* @author waitwalker
+* @date 2020.1.20
+* @parameter 
+*/
 - (void)pSetupTapAction {
     UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapActionCallBack)];
     [self addGestureRecognizer:tapGes];
@@ -56,6 +78,12 @@
     [self pHiddenPlayerBar];
 }
 
+/**
+* @description player hidden 
+* @author waitwalker
+* @date 2020.1.20
+* @parameter 
+*/
 - (void)pHiddenPlayerBar {
     // 如果没有隐藏 过 3s 自动隐藏
     if (!self.playerBar.hidden) {
@@ -72,8 +100,24 @@
     }
 }
 
-// MARK: play bar delegate 回调
+// MARK: public methods
+- (void)play {
+    if (self && self.avPlayer) {
+        [self.avPlayer play];
+    } else {
+        NSLog(@"播放遇到问题");
+    }
+}
 
+- (void)pause {
+    if (self && self.avPlayer) {
+        [self.avPlayer pause];
+    } else {
+        NSLog(@"暂停遇到问题");
+    }
+}
+
+// MARK: play bar delegate 回调
 /**
  * @description 播放按钮点击回调
  * @author waitwalker
@@ -81,7 +125,16 @@
  * @parameter 
  */
 - (void)dTappedPlayButton:(NSDictionary *)info {
-    
+    if (info) {
+        NSString *playStatus = info[@"playStatus"];
+        if ([playStatus isEqualToString:kPlayStatusPlay]) {
+            
+        } else {
+            
+        }
+    } else {
+        NSLog(@"播放按钮回调数据有问题");
+    }
 }
 
 @end
@@ -121,7 +174,7 @@
         [button setTitle:@"播" forState:UIControlStateNormal];
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(dTappedPlayButton:)]) {
-        NSString *playStatus = self.playButton.selected ? @"pause" : @"play";
+        NSString *playStatus = self.playButton.selected ? kPlayStatusPause : kPlayStatusPlay;
         [self.delegate dTappedPlayButton:@{@"playStatus":playStatus}];
     }
 }

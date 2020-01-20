@@ -8,7 +8,7 @@
 
 #import "WWPlayer.h"
 #import <AVFoundation/AVFoundation.h>
-@interface WWPlayer()
+@interface WWPlayer()<WWPlayerBarDelegate>
 @property (nonatomic, strong) WWPlayerBar *playerBar;
 @property (nonatomic, strong) AVPlayer *avPlayer;
 
@@ -41,7 +41,7 @@
 
 - (void)pSetupPlayerBar {
     self.playerBar = [[WWPlayerBar alloc]initWithFrame:CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50)];
-    self.playerBar.backgroundColor = [UIColor redColor];
+    self.playerBar.delegate = self;
     [self addSubview:self.playerBar];
 }
 
@@ -72,7 +72,22 @@
     }
 }
 
+// MARK: play bar delegate 回调
+
+/**
+ * @description 播放按钮点击回调
+ * @author waitwalker
+ * @date 2020.1.20
+ * @parameter 
+ */
+- (void)dTappedPlayButton:(NSDictionary *)info {
+    
+}
+
 @end
+
+
+
 
 // MARK: Player Bar
 @interface WWPlayerBar()
@@ -104,6 +119,10 @@
         [button setTitle:@"停" forState:UIControlStateNormal];
     } else {
         [button setTitle:@"播" forState:UIControlStateNormal];
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(dTappedPlayButton:)]) {
+        NSString *playStatus = self.playButton.selected ? @"pause" : @"play";
+        [self.delegate dTappedPlayButton:@{@"playStatus":playStatus}];
     }
 }
 

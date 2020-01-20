@@ -53,6 +53,12 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     
     // 监听缓冲进度
     [self.avPlayer.currentItem addObserver:self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];
+    
+    // 监听缓冲是否为空
+    [self.avPlayer.currentItem addObserver:self forKeyPath:@"playbackBufferEmpty" options:NSKeyValueObservingOptionNew context:nil];
+    
+    // 监听缓冲是否可以播放
+    [self.avPlayer.currentItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
 }
 
 /**
@@ -85,6 +91,10 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
             
             NSLog(@"startSeconds:%f,durationSeconds:%f",startSeconds,durationSeconds);
         }
+    } else if ([keyPath isEqualToString:@"playbackBufferEmpty"]) {
+        
+    } else if ([keyPath isEqualToString:@"playbackLikelyToKeepUp"]) {
+        
     }
 }
 

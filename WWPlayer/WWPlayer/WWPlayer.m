@@ -12,6 +12,7 @@
 @property (nonatomic, strong) WWPlayerBar *playerBar;
 @property (nonatomic, strong) AVPlayer *avPlayer;
 @property (nonatomic, assign) BOOL isReady;
+@property (nonatomic, strong) UIActivityIndicatorView *activityView;
 @end
 
 // play status:play
@@ -26,6 +27,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
         [self pSetupPlayer];
         [self pSetupPlayerBar];
         [self pSetupTapAction];
+        [self pSetupActivity];
     }
     return self;
 }
@@ -92,9 +94,15 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
             NSLog(@"startSeconds:%f,durationSeconds:%f",startSeconds,durationSeconds);
         }
     } else if ([keyPath isEqualToString:@"playbackBufferEmpty"]) {
-        
+        NSLog(@"正在加载");
+        if (self.activityView) {
+            [self.activityView startAnimating];
+        }
     } else if ([keyPath isEqualToString:@"playbackLikelyToKeepUp"]) {
-        
+        NSLog(@"加载的内容可以播放了");
+        if (self.activityView) {
+            [self.activityView stopAnimating];
+        }
     }
 }
 
@@ -142,10 +150,27 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     }
 }
 
+/**
+* @description activity view 
+* @author waitwalker
+* @date 2020.1.20
+* @parameter 
+*/
+- (void)pSetupActivity {
+    self.activityView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
+    NSLog(@"self.centerX:%f  self.centerY:%f",self.center.x,self.center.y);
+    self.activityView.center = CGPointMake(self.bounds.size.width / 2.0, self.bounds.size.height / 2.0);
+    [self addSubview:self.activityView];
+}
+
 - (void)dealloc {
     if (self.avPlayer) {
         [self.avPlayer pause];
         self.avPlayer = nil;
+    }
+    
+    if (self.activityView) {
+        self.activityView = nil;
     }
 }
 

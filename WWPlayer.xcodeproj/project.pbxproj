@@ -16,6 +16,7 @@
 		BFB8B66923D54BF400DA036F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB8B66823D54BF400DA036F /* main.m */; };
 		BFB8B67323D54BF400DA036F /* WWPlayerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB8B67223D54BF400DA036F /* WWPlayerTests.m */; };
 		BFB8B67E23D54BF400DA036F /* WWPlayerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB8B67D23D54BF400DA036F /* WWPlayerUITests.m */; };
+		BFB8B68E23D54D0D00DA036F /* WWPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB8B68D23D54D0D00DA036F /* WWPlayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,8 @@
 		BFB8B67923D54BF400DA036F /* WWPlayerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WWPlayerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFB8B67D23D54BF400DA036F /* WWPlayerUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WWPlayerUITests.m; sourceTree = "<group>"; };
 		BFB8B67F23D54BF400DA036F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFB8B68C23D54D0D00DA036F /* WWPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WWPlayer.h; sourceTree = "<group>"; };
+		BFB8B68D23D54D0D00DA036F /* WWPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WWPlayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +107,7 @@
 		BFB8B65523D54BEF00DA036F /* WWPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				BFB8B68B23D54CCA00DA036F /* WWPlayer */,
 				BFB8B65623D54BEF00DA036F /* AppDelegate.h */,
 				BFB8B65723D54BEF00DA036F /* AppDelegate.m */,
 				BFB8B65923D54BEF00DA036F /* SceneDelegate.h */,
@@ -135,6 +139,15 @@
 				BFB8B67F23D54BF400DA036F /* Info.plist */,
 			);
 			path = WWPlayerUITests;
+			sourceTree = "<group>";
+		};
+		BFB8B68B23D54CCA00DA036F /* WWPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				BFB8B68C23D54D0D00DA036F /* WWPlayer.h */,
+				BFB8B68D23D54D0D00DA036F /* WWPlayer.m */,
+			);
+			path = WWPlayer;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -269,6 +282,7 @@
 			files = (
 				BFB8B65E23D54BEF00DA036F /* ViewController.m in Sources */,
 				BFB8B65823D54BEF00DA036F /* AppDelegate.m in Sources */,
+				BFB8B68E23D54D0D00DA036F /* WWPlayer.m in Sources */,
 				BFB8B66923D54BF400DA036F /* main.m in Sources */,
 				BFB8B65B23D54BEF00DA036F /* SceneDelegate.m in Sources */,
 			);
@@ -442,6 +456,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N5ZJ5W7ZL3;
 				INFOPLIST_FILE = WWPlayer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -459,6 +474,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = N5ZJ5W7ZL3;
 				INFOPLIST_FILE = WWPlayer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

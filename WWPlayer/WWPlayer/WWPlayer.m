@@ -46,7 +46,6 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     layer.videoGravity = AVLayerVideoGravityResizeAspect;
     layer.frame = self.bounds;
     [self.layer addSublayer:layer];
-    [self.avPlayer play];
 }
 
 /**
@@ -128,9 +127,9 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     if (info) {
         NSString *playStatus = info[@"playStatus"];
         if ([playStatus isEqualToString:kPlayStatusPlay]) {
-            
+            [self pause];
         } else {
-            
+            [self play];
         }
     } else {
         NSLog(@"播放按钮回调数据有问题");

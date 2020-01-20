@@ -251,7 +251,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 @end
 
 @implementation WWPlayerBar
-
+// MARK: 成员变量声明
 @synthesize totalDuration = _totalDuration;
 @synthesize currentTime = _currentTime;
 @synthesize totalLoadedTime = _totalLoadedTime;
@@ -267,7 +267,6 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 // MARK: setter
 - (void)setTotalDuration:(NSInteger)totalDuration {
     _totalDuration = totalDuration;
-    NSLog(@"播放总时间: %ld",(long)totalDuration);
 }
 
 - (NSInteger)totalDuration {
@@ -276,9 +275,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 
 - (void)setTotalLoadedTime:(float)totalLoadedTime {
     _totalLoadedTime = totalLoadedTime;
-    NSLog(@"缓冲的总时长:%f",totalLoadedTime);
     if (_totalDuration > 0) {
-        NSLog(@"(totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width:%f",(totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width);
         self.loadedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, 40);
     }
 }
@@ -289,13 +286,16 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 
 - (void)setCurrentTime:(NSInteger)currentTime {
     _currentTime = currentTime;
-    NSLog(@"当前播放时间: %ld",(long)currentTime);
+    if (_totalDuration > 0) {
+        CGFloat progress = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
+        CGFloat width = progress * self.progressContainerView.bounds.size.width;
+        self.playedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, width, 40);
+    }
 }
 
 - (NSInteger)currentTime {
     return _currentTime;
 }
-
 
 /**
  * @description init subviews
@@ -316,9 +316,13 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     self.progressContainerView.backgroundColor = [UIColor purpleColor];
     [self addSubview:self.progressContainerView];
     
-    self.loadedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 30, 40)];
+    self.loadedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, 40)];
     self.loadedView.backgroundColor = [UIColor redColor];
     [self addSubview:self.loadedView];
+    
+    self.playedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, 40)];
+    self.playedView.backgroundColor = [UIColor blueColor];
+    [self addSubview:self.playedView];
 }
 
 - (void)playButtonActionCallBack:(UIButton *)button {

@@ -17,7 +17,7 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    WWPlayer *player = [[WWPlayer alloc]initWithFrame:CGRectMake(50, 100, 150, 150)];
+    WWPlayer *player = [[WWPlayer alloc]initWithFrame:CGRectMake(0, 100, [UIScreen mainScreen].bounds.size.width, 300)];
     [self.view addSubview:player];
 }
 

@@ -21,6 +21,7 @@
         self.backgroundColor = [UIColor blackColor];
         [self pSetupPlayer];
         [self pSetupPlayerBar];
+        [self pSetupTapAction];
     }
     return self;
 }
@@ -42,6 +43,26 @@
     self.playerBar = [[WWPlayerBar alloc]initWithFrame:CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50)];
     self.playerBar.backgroundColor = [UIColor redColor];
     [self addSubview:self.playerBar];
+}
+
+- (void)pSetupTapAction {
+    UITapGestureRecognizer *tapGes = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapActionCallBack)];
+    [self addGestureRecognizer:tapGes];
+    [self pHiddenPlayerBar];
+}
+
+- (void)tapActionCallBack {
+    self.playerBar.hidden = !self.playerBar.hidden;
+    [self pHiddenPlayerBar];
+}
+
+- (void)pHiddenPlayerBar {
+    // 如果没有隐藏 过 3s 自动隐藏
+    if (!self.playerBar.hidden) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            self.playerBar.hidden = true;
+        });
+    }
 }
 
 - (void)dealloc {

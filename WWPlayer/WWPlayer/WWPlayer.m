@@ -59,7 +59,7 @@
 - (void)pHiddenPlayerBar {
     // 如果没有隐藏 过 3s 自动隐藏
     if (!self.playerBar.hidden) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             self.playerBar.hidden = true;
         });
     }
@@ -74,8 +74,10 @@
 
 @end
 
-
+// MARK: Player Bar
 @interface WWPlayerBar()
+@property (nonatomic, strong) UIButton *playButton;
+
 
 @end
 
@@ -86,6 +88,18 @@
         
     }
     return self;
+}
+
+- (void)pSetupSubviews {
+    self.playButton = [[UIButton alloc]initWithFrame:CGRectMake(30, 0, 50, 50)];
+    [self.playButton setTitle:@"播" forState:UIControlStateNormal];
+    [self.playButton setBackgroundColor:[UIColor greenColor]];
+    [self.playButton addTarget:self action:@selector(playButtonActionCallBack) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.playButton];
+}
+
+- (void)playButtonActionCallBack {
+    
 }
 
 

@@ -45,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 // MARK: player bar
 @interface WWPlayerBar : UIView
 @property (nonatomic, weak) id<WWPlayerBarDelegate>delegate;
+@property (nonatomic, assign) float totalLoadedTime;
+@property (nonatomic, assign) NSInteger totalDuration;
+@property (nonatomic, assign) NSInteger currentTime;
 
 @end
 

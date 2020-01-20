@@ -61,6 +61,16 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     
     // 监听缓冲是否可以播放
     [self.avPlayer.currentItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
+    __weak __typeof(self) weakSelf = self;
+    [self.avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:nil usingBlock:^(CMTime time) {
+        __strong __typeof(weakSelf) strongSelf = weakSelf; 
+        NSLog(@"current thread:%@",[NSThread currentThread]);
+        NSInteger currentTime = strongSelf.avPlayer.currentItem.currentTime.value / strongSelf.avPlayer.currentItem.currentTime.timescale;
+        NSInteger durationTime = strongSelf.avPlayer.currentItem.duration.value / strongSelf.avPlayer.currentItem.duration.timescale;
+        NSLog(@"当前播放时间:%ld 总的播放时间:%ld",(long)currentTime,(long)durationTime);
+        strongSelf.playerBar.currentTime = currentTime;
+        strongSelf.playerBar.totalDuration = durationTime;
+    }];
 }
 
 /**
@@ -90,8 +100,8 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
             CMTimeRange timeRange = [array.firstObject CMTimeRangeValue];
             float startSeconds = CMTimeGetSeconds(timeRange.start);
             float durationSeconds = CMTimeGetSeconds(timeRange.duration);
-            
-            NSLog(@"startSeconds:%f,durationSeconds:%f",startSeconds,durationSeconds);
+            NSLog(@"start load seconds:%f,duration load seconds:%f",startSeconds,durationSeconds);
+            self.playerBar.totalLoadedTime = durationSeconds;
         }
     } else if ([keyPath isEqualToString:@"playbackBufferEmpty"]) {
         NSLog(@"正在加载");
@@ -244,6 +254,19 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     return self;
 }
 
+// MARK: setter
+- (void)setTotalLoadedTime:(float)totalLoadedTime {
+    NSLog(@"缓冲的总时长:%f",totalLoadedTime);
+}
+
+- (void)setCurrentTime:(NSInteger)currentTime {
+    NSLog(@"当前播放时间: %ld",(long)currentTime);
+}
+
+- (void)setTotalDuration:(NSInteger)totalDuration {
+    NSLog(@"播放总时间: %ld",(long)totalDuration);
+}
+
 /**
  * @description init subviews
  * @author waitwalker
@@ -262,6 +285,10 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 5, self.bounds.size.width - 70 - 70, 40)];
     self.progressContainerView.backgroundColor = [UIColor purpleColor];
     [self addSubview:self.progressContainerView];
+    
+    self.loadedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 30, 40)];
+    self.loadedView.backgroundColor = [UIColor redColor];
+    [self addSubview:self.loadedView];
 }
 
 - (void)playButtonActionCallBack:(UIButton *)button {

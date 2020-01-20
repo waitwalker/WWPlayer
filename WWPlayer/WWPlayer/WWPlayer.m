@@ -11,6 +11,7 @@
 @interface WWPlayer()<WWPlayerBarDelegate>
 @property (nonatomic, strong) WWPlayerBar *playerBar;
 @property (nonatomic, strong) AVPlayer *avPlayer;
+@property (nonatomic, assign) BOOL isReady;
 @end
 
 // play status:play
@@ -46,6 +47,45 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     layer.videoGravity = AVLayerVideoGravityResizeAspect;
     layer.frame = self.bounds;
     [self.layer addSublayer:layer];
+    
+    // 监听播放状态
+    [self.avPlayer.currentItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
+    
+    // 监听缓冲进度
+    [self.avPlayer.currentItem addObserver:self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+/**
+ * @description observe play status
+ * @author waitwalker
+ * @date 2020.1.20
+ * @parameter 
+ */
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
+    if ([keyPath isEqualToString:@"status"]) {
+        AVPlayerItemStatus currentStatus = [change[NSKeyValueChangeNewKey]integerValue];
+        switch (currentStatus) {
+            case AVPlayerItemStatusReadyToPlay:
+                self.isReady = true;
+                NSLog(@"可以播放了");
+                break;
+                
+            default:
+                self.isReady = false;
+                NSLog(@"不可以播放");
+                break;
+        }
+    } else if ([keyPath isEqualToString:@"loadedTimeRanges"]) {
+        NSArray *array = self.avPlayer.currentItem.loadedTimeRanges;
+        if (array.count > 0) {
+            // 本次缓冲时间范围
+            CMTimeRange timeRange = [array.firstObject CMTimeRangeValue];
+            float startSeconds = CMTimeGetSeconds(timeRange.start);
+            float durationSeconds = CMTimeGetSeconds(timeRange.duration);
+            
+            NSLog(@"startSeconds:%f,durationSeconds:%f",startSeconds,durationSeconds);
+        }
+    }
 }
 
 /**
@@ -144,21 +184,25 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 // MARK: Player Bar
 @interface WWPlayerBar()
 @property (nonatomic, strong) UIButton *playButton;
-
-
 @end
 
 @implementation WWPlayerBar
-
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
+        self.backgroundColor = [[UIColor orangeColor]colorWithAlphaComponent:0.3];
         [self pSetupSubviews];
     }
     return self;
 }
 
+/**
+ * @description init subviews
+ * @author waitwalker
+ * @date 2020.1.20
+ * @parameter 
+ */
 - (void)pSetupSubviews {
-    self.playButton = [[UIButton alloc]initWithFrame:CGRectMake(30, 0, 50, 50)];
+    self.playButton = [[UIButton alloc]initWithFrame:CGRectMake(20, 0, 50, 50)];
     [self.playButton setTitle:@"播" forState:UIControlStateNormal];
     [self.playButton setBackgroundColor:[UIColor greenColor]];
     [self.playButton addTarget:self action:@selector(playButtonActionCallBack:) forControlEvents:UIControlEventTouchUpInside];

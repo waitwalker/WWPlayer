@@ -48,11 +48,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) float totalLoadedTime;
 @property (nonatomic, assign) NSInteger totalDuration;
 @property (nonatomic, assign) NSInteger currentTime;
-
 @end
 
+// MARK: UIView Category
 @interface UIView (Category)
-
 @property (nonatomic, assign) CGFloat frameX;
 @property (nonatomic, assign) CGFloat frameY;
 @property (nonatomic, assign) CGFloat frameWidth;
@@ -65,7 +64,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat boundsHeight;
 @property (nonatomic, assign) CGFloat centerX;
 @property (nonatomic, assign) CGFloat centerY;
-
 @end
 
 

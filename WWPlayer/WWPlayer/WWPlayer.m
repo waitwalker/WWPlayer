@@ -230,6 +230,9 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 // MARK: Player Bar
 @interface WWPlayerBar()
 @property (nonatomic, strong) UIButton *playButton;
+@property (nonatomic, strong) UIView *progressContainerView;
+@property (nonatomic, strong) UIView *loadedView;
+@property (nonatomic, strong) UIView *playedView;
 @end
 
 @implementation WWPlayerBar
@@ -248,11 +251,17 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
  * @parameter 
  */
 - (void)pSetupSubviews {
-    self.playButton = [[UIButton alloc]initWithFrame:CGRectMake(20, 0, 50, 50)];
+    
+    // play button
+    self.playButton = [[UIButton alloc]initWithFrame:CGRectMake(20, 5, 40, 40)];
     [self.playButton setTitle:@"播" forState:UIControlStateNormal];
     [self.playButton setBackgroundColor:[UIColor greenColor]];
     [self.playButton addTarget:self action:@selector(playButtonActionCallBack:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.playButton];
+    
+    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 5, self.bounds.size.width - 70 - 70, 40)];
+    self.progressContainerView.backgroundColor = [UIColor purpleColor];
+    [self addSubview:self.progressContainerView];
 }
 
 - (void)playButtonActionCallBack:(UIButton *)button {

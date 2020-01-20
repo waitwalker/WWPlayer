@@ -248,6 +248,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 @property (nonatomic, strong) UIView *progressContainerView;
 @property (nonatomic, strong) UIView *loadedView;
 @property (nonatomic, strong) UIView *playedView;
+@property (nonatomic, strong) UIImageView *idotImageView;
 @end
 
 @implementation WWPlayerBar
@@ -291,6 +292,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
         CGFloat progress = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
         CGFloat width = progress * self.progressContainerView.frame.size.width;
         self.playedView.frame = CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, width, self.progressContainerView.frame.size.height);
+        self.idotImageView.frame = CGRectMake(self.progressContainerView.frame.origin.x + width - 15, self.progressContainerView.frame.origin.y - 10, 30, 30);
     }
 }
 
@@ -324,6 +326,12 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     self.playedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x, self.progressContainerView.frame.origin.y, 0, self.progressContainerView.frame.size.height)];
     self.playedView.backgroundColor = [UIColor blueColor];
     [self addSubview:self.playedView];
+    
+    self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(self.progressContainerView.frame.origin.x - 15, self.progressContainerView.frame.origin.y - 10, 30, 30)];
+    self.idotImageView.layer.cornerRadius = 15.0;
+    self.idotImageView.clipsToBounds = true;
+    self.idotImageView.backgroundColor = [UIColor yellowColor];
+    [self addSubview:self.idotImageView];
 }
 
 - (void)playButtonActionCallBack:(UIButton *)button {

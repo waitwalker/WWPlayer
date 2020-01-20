@@ -7,6 +7,7 @@
 //
 
 #import "ViewController.h"
+#import "WWPlayer.h"
 
 @interface ViewController ()
 
@@ -16,7 +17,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    WWPlayer *player = [[WWPlayer alloc]initWithFrame:CGRectMake(50, 100, 150, 150)];
+    [self.view addSubview:player];
 }
 
 

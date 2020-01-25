@@ -248,9 +248,13 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 - (void)dTappedFullButton:(NSDictionary *)info {
     NSString *screenStatus = info[@"screenStatus"];
     if ([screenStatus isEqualToString:kScreenStatusFull]) {
-
+        [UIView animateWithDuration:0.25 animations:^{
+            self.transform = CGAffineTransformMakeRotation(M_PI / 2);
+        }];
     } else {
-
+        [UIView animateWithDuration:0.25 animations:^{
+            self.transform = CGAffineTransformMakeRotation(-M_PI / 2);
+        }];
     }
 }
 

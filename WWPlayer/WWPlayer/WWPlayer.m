@@ -42,7 +42,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 - (void)pSetupPlayer {
     //http://cdn5.hd.etiantian.net/616d59dd8830d7b200a4a711062b9b89/5E257B44/etthd/msgz002041/400.mp4
     
-    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"http://cdn5.hd.etiantian.net/616d59dd8830d7b200a4a711062b9b89/5E257B44/etthd/msgz002041/400.mp4"]];
+    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"]];
     self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:playerItem];
     
     AVPlayerLayer *layer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
@@ -204,9 +204,9 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
     if (info) {
         NSString *playStatus = info[@"playStatus"];
         if ([playStatus isEqualToString:kPlayStatusPlay]) {
-            [self pause];
-        } else {
             [self play];
+        } else {
+            [self pause];
         }
     } else {
         NSLog(@"播放按钮回调数据有问题");
@@ -379,7 +379,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
         [button setTitle:@"播" forState:UIControlStateNormal];
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(dTappedPlayButton:)]) {
-        NSString *playStatus = self.playButton.selected ? kPlayStatusPause : kPlayStatusPlay;
+        NSString *playStatus = self.playButton.selected ? kPlayStatusPlay : kPlayStatusPause;
         [self.delegate dTappedPlayButton:@{@"playStatus":playStatus}];
     }
 }

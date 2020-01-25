@@ -12,6 +12,8 @@
 @property (nonatomic, strong) WWPlayerBar *playerBar;
 @property (nonatomic, strong) AVPlayer *avPlayer;
 @property (nonatomic, assign) BOOL isReady;
+@property (nonatomic, assign) BOOL isPlaying;
+@property (nonatomic, assign) BOOL isDraggedPaues;
 @property (nonatomic, strong) UIActivityIndicatorView *activityView;
 @end
 
@@ -182,7 +184,9 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 - (void)play {
     if (self && self.avPlayer) {
         [self.avPlayer play];
+        self.isPlaying = true;
     } else {
+        self.isPlaying = false;
         NSLog(@"播放遇到问题");
     }
 }
@@ -193,6 +197,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     } else {
         NSLog(@"暂停遇到问题");
     }
+    self.isPlaying = false;
 }
 
 // MARK: play bar delegate 回调
@@ -212,6 +217,26 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
         }
     } else {
         NSLog(@"播放按钮回调数据有问题");
+    }
+}
+
+- (void)dDragBeganProgress:(NSDictionary *)info {
+    if (self.isPlaying && self.avPlayer) {
+        [self.avPlayer pause];
+        self.isDraggedPaues = true;
+    } else {
+        self.isDraggedPaues = false;
+    }
+}
+
+- (void)dDragEndedProgress:(NSDictionary *)info {
+    CGFloat currentTime = [info[@"currentTime"] floatValue];
+    if (self.avPlayer) {
+        [self.avPlayer seekToTime:CMTimeMake((NSInteger)currentTime, 1)];
+        if (self.isDraggedPaues) {
+            [self.avPlayer play];
+            self.isDraggedPaues = false;
+        }
     }
 }
 

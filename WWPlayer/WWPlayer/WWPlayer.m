@@ -244,7 +244,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 @interface WWPlayerBar()
 @property (nonatomic, strong) UIButton *playButton;
 @property (nonatomic, strong) UIView *progressContainerView;
-@property (nonatomic, strong) UIView *loadedView;
+@property (nonatomic, strong) UIView *bufferedView;
 @property (nonatomic, strong) UIView *playedView;
 @property (nonatomic, strong) UIImageView *idotImageView;
 @end
@@ -276,7 +276,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 - (void)setTotalLoadedTime:(float)totalLoadedTime {
     _totalLoadedTime = totalLoadedTime;
     if (_totalDuration > 0) {
-        self.loadedView.frame = CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, self.progressContainerView.bounds.size.height);
+        self.bufferedView.frame = CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, self.progressContainerView.bounds.size.height);
     }
 }
 
@@ -291,7 +291,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
         CGFloat progress = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
         CGFloat width = progress * self.progressContainerView.frame.size.width;
         self.playedView.frame = CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, width, self.progressContainerView.bounds.size.height);
-        self.idotImageView.frame = CGRectMake(self.progressContainerView.bounds.origin.x + width - 15, self.progressContainerView.bounds.origin.y - 10, 30, 30);
+        self.idotImageView.frame = CGRectMake(width - 10, -7.5, 20, 20);
     }
 }
 
@@ -308,30 +308,35 @@ static NSString * const kPlayStatusPause = @"kPlayStatusPause";
 - (void)pSetupSubviews {
     
     // play button
-    self.playButton = [[UIButton alloc]initWithFrame:CGRectMake(20, 5, 40, 40)];
+    self.playButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 5, 40, 40)];
     [self.playButton setTitle:@"播" forState:UIControlStateNormal];
     [self.playButton setBackgroundColor:[UIColor greenColor]];
     [self.playButton addTarget:self action:@selector(playButtonActionCallBack:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.playButton];
     
     // progress container 
-    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 20, self.bounds.size.width - 70 - 70, 15)];
+    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 22.5, self.bounds.size.width - 70 - 70, 5)];
+    self.progressContainerView.layer.cornerRadius = 2.5;
     self.progressContainerView.backgroundColor = [UIColor purpleColor];
     [self addSubview:self.progressContainerView];
     
     // loaded view
-    self.loadedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, 0, self.progressContainerView.frame.size.height)];
-    self.loadedView.backgroundColor = [UIColor redColor];
-    [self.progressContainerView addSubview:self.loadedView];
+    self.bufferedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, 0, self.progressContainerView.frame.size.height)];
+    self.bufferedView.layer.cornerRadius = 2.5;
+    self.bufferedView.clipsToBounds = true;
+    self.bufferedView.backgroundColor = [UIColor redColor];
+    [self.progressContainerView addSubview:self.bufferedView];
     
     // played view
     self.playedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, 0, self.progressContainerView.frame.size.height)];
+    self.playedView.layer.cornerRadius = 2.5;
+    self.playedView.clipsToBounds = true;
     self.playedView.backgroundColor = [UIColor blueColor];
     [self.progressContainerView addSubview:self.playedView];
     
     // drag idot
-    self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x - 10, self.progressContainerView.bounds.origin.y - 10, 30, 30)];
-    self.idotImageView.layer.cornerRadius = 15.0;
+    self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(-10, -7.5, 20, 20)];
+    self.idotImageView.layer.cornerRadius = 10.0;
     self.idotImageView.clipsToBounds = true;
     self.idotImageView.userInteractionEnabled = true;
     self.idotImageView.backgroundColor = [UIColor yellowColor];

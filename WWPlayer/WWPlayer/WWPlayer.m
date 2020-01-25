@@ -16,9 +16,9 @@
 @end
 
 // play status:play
-static NSString * const kPlayStatusPlay = @"kPlayStatusPlay";
+static NSString * const kPlayStatusPlay = @"kPlayStatus_Play";
 // play status:pause
-static NSString * const kPlayStatusPause = @"kPlayStatusPause";
+static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 
 @implementation WWPlayer
 - (instancetype)initWithFrame:(CGRect)frame {

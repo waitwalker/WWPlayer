@@ -247,6 +247,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 @property (nonatomic, strong) UIView *bufferedView;
 @property (nonatomic, strong) UIView *playedView;
 @property (nonatomic, strong) UIImageView *idotImageView;
+@property (nonatomic, strong) UILabel *timeLabel;
 @end
 
 @implementation WWPlayerBar
@@ -314,7 +315,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     [self addSubview:self.playButton];
     
     // progress container 
-    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 22.5, self.bounds.size.width - 70 - 70, 5)];
+    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 22.5, self.bounds.size.width - 70 - 100, 5)];
     self.progressContainerView.layer.cornerRadius = 2.5;
     self.progressContainerView.backgroundColor = [UIColor purpleColor];
     [self addSubview:self.progressContainerView];
@@ -340,6 +341,12 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     self.idotImageView.userInteractionEnabled = true;
     self.idotImageView.backgroundColor = [UIColor yellowColor];
     [self.progressContainerView addSubview:self.idotImageView];
+
+    self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 10, 45, 30)];
+    self.timeLabel.textColor = [UIColor whiteColor];
+    self.timeLabel.font = [UIFont systemFontOfSize:10];
+    self.timeLabel.text = @"123456";
+    [self addSubview:self.timeLabel];
 }
 
 /**
@@ -378,8 +385,15 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     }
     CGFloat progressScale = X / self.progressContainerView.frame.size.width;
     CGFloat currentTime = progressScale * self.totalDuration;
-    if (panGes.state == UIGestureRecognizerStateEnded && self.delegate && [self.delegate respondsToSelector:@selector(dDraggedProgress:)]) {
-        [self.delegate dDraggedProgress:@{@"currentTime":@(currentTime)}];
+    if (panGes.state == UIGestureRecognizerStateBegan) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dDragBeganProgress:)]) {
+            [self.delegate dDragBeganProgress:@{@"dragStatus":@"began"}];
+        }
+    } else if (panGes.state == UIGestureRecognizerStateEnded) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dDragEndedProgress:)]) {
+            [self.delegate dDragEndedProgress:@{@"currentTime":@(currentTime),
+                                                @"dragStatus":@"ended"}];
+        }
     }
 }
 

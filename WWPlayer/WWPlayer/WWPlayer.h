@@ -27,9 +27,10 @@ NS_ASSUME_NONNULL_BEGIN
 * @parameter 
 */
 - (void)pause;
-
-
 @end
+
+
+
 
 @protocol WWPlayerBarDelegate <NSObject>
 @required
@@ -43,12 +44,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 /**
-* @description drag progress
+* @description drag began progress
 * @author waitwalker
 * @date 2020.1.25
 * @parameter progress info
 */
-- (void)dDraggedProgress:(NSDictionary * _Nullable)info;
+- (void)dDragBeganProgress:(NSDictionary * _Nullable)info;
+
+/**
+* @description drag ended progress
+* @author waitwalker
+* @date 2020.1.25
+* @parameter progress info
+*/
+- (void)dDragEndedProgress:(NSDictionary * _Nullable)info;
 @end
 
 // MARK: player bar

@@ -41,8 +41,10 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
  */
 - (void)pSetupPlayer {
     //http://cdn5.hd.etiantian.net/616d59dd8830d7b200a4a711062b9b89/5E257B44/etthd/msgz002041/400.mp4
+    //http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4
+    //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
     
-    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"]];
+    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4"]];
     self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:playerItem];
     
     AVPlayerLayer *layer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
@@ -247,7 +249,9 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 @property (nonatomic, strong) UIView *bufferedView;
 @property (nonatomic, strong) UIView *playedView;
 @property (nonatomic, strong) UIImageView *idotImageView;
-@property (nonatomic, strong) UILabel *timeLabel;
+@property (nonatomic, strong) UILabel *currentTimeLabel;
+@property (nonatomic, strong) UILabel *totalTimeLabel;
+@property (nonatomic, assign) BOOL isSetted;
 @end
 
 @implementation WWPlayerBar
@@ -268,6 +272,8 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 // MARK: setter
 - (void)setTotalDuration:(NSInteger)totalDuration {
     _totalDuration = totalDuration;
+    NSString *totalStr = [self timeFormat:totalDuration];
+    self.totalTimeLabel.text = [NSString stringWithFormat:@"%@",totalStr];
 }
 
 - (NSInteger)totalDuration {
@@ -287,6 +293,8 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 
 - (void)setCurrentTime:(NSInteger)currentTime {
     _currentTime = currentTime;
+    NSString *currentStr = [self timeFormat:currentTime];
+    self.currentTimeLabel.text = [NSString stringWithFormat:@"%@",currentStr];
     if (_totalDuration > 0) {
         CGFloat progressScale = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
         CGFloat width = progressScale * self.progressContainerView.frame.size.width;
@@ -315,7 +323,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     [self addSubview:self.playButton];
     
     // progress container 
-    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(70, 22.5, self.bounds.size.width - 70 - 100, 5)];
+    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(60, 22.5, self.bounds.size.width - 60 - 100, 5)];
     self.progressContainerView.layer.cornerRadius = 2.5;
     self.progressContainerView.backgroundColor = [UIColor purpleColor];
     [self addSubview:self.progressContainerView];
@@ -342,11 +350,18 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     self.idotImageView.backgroundColor = [UIColor yellowColor];
     [self.progressContainerView addSubview:self.idotImageView];
 
-    self.timeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 10, 45, 30)];
-    self.timeLabel.textColor = [UIColor whiteColor];
-    self.timeLabel.font = [UIFont systemFontOfSize:10];
-    self.timeLabel.text = @"123456";
-    [self addSubview:self.timeLabel];
+    self.currentTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 8, 50, 20)];
+    self.currentTimeLabel.textColor = [UIColor whiteColor];
+    self.currentTimeLabel.textAlignment= NSTextAlignmentLeft;
+    self.currentTimeLabel.font = [UIFont systemFontOfSize:10];
+    self.currentTimeLabel.text = @"00:00";
+    [self addSubview:self.currentTimeLabel];
+
+    self.totalTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 15, 50, 30)];
+    self.totalTimeLabel.textColor = [UIColor whiteColor];
+    self.totalTimeLabel.textAlignment= NSTextAlignmentLeft;
+    self.totalTimeLabel.font = [UIFont systemFontOfSize:10];
+    [self addSubview:self.totalTimeLabel];
 }
 
 /**
@@ -362,6 +377,12 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     [self.idotImageView addGestureRecognizer:panGes];
 }
 
+/**
+* @description  drag action call back
+* @author waitwalker
+* @date 2020.1.25
+* @parameter
+*/
 - (void)panActionCallBack:(UIPanGestureRecognizer *)panGes {
     //获取偏移量
     CGFloat moveX = [panGes translationInView:self].x;
@@ -397,6 +418,12 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     }
 }
 
+/**
+* @description play button tap call back
+* @author waitwalker
+* @date 2020.1.25
+* @parameter
+*/
 - (void)playButtonActionCallBack:(UIButton *)button {
     self.playButton.selected = !self.playButton.selected;
     if (self.playButton.selected) {
@@ -410,6 +437,21 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     }
 }
 
+/**
+* @description play time format
+* @author waitwalker
+* @date 2020.1.20
+* @parameter
+*/
+-(NSString *)timeFormat:(NSInteger)totalTime{
+    //format of minute
+    NSString *str_minute = [NSString stringWithFormat:@"%02ld",(totalTime % 3600) / 60];
+    //format of second
+    NSString *str_second = [NSString stringWithFormat:@"%02ld",totalTime % 60];
+    //format of time
+    NSString *format_time = [NSString stringWithFormat:@"%@:%@",str_minute,str_second];
+    return format_time;
+}
 
 @end
 

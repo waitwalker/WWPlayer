@@ -40,6 +40,15 @@ NS_ASSUME_NONNULL_BEGIN
  * @parameter tap info
  */
 - (void)dTappedPlayButton:(NSDictionary  * _Nullable)info;
+
+@optional
+/**
+* @description drag progress
+* @author waitwalker
+* @date 2020.1.25
+* @parameter progress info
+*/
+- (void)dDraggedProgress:(NSDictionary * _Nullable)info;
 @end
 
 // MARK: player bar

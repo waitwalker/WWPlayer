@@ -276,7 +276,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 - (void)setTotalLoadedTime:(float)totalLoadedTime {
     _totalLoadedTime = totalLoadedTime;
     if (_totalDuration > 0) {
-        self.bufferedView.frame = CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, self.progressContainerView.bounds.size.height);
+        self.bufferedView.frame = CGRectMake(0, self.progressContainerView.bounds.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, self.progressContainerView.bounds.size.height);
     }
 }
 
@@ -287,11 +287,10 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 - (void)setCurrentTime:(NSInteger)currentTime {
     _currentTime = currentTime;
     if (_totalDuration > 0) {
-
         CGFloat progress = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
         CGFloat width = progress * self.progressContainerView.frame.size.width;
-        self.playedView.frame = CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, width, self.progressContainerView.bounds.size.height);
-        self.idotImageView.frame = CGRectMake(width - 10, -7.5, 20, 20);
+        self.playedView.frame = CGRectMake(0, self.progressContainerView.bounds.origin.y, width + 10, self.progressContainerView.bounds.size.height);
+        self.idotImageView.frame = CGRectMake(width, -7.5, 20, 20);
     }
 }
 
@@ -320,7 +319,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     self.progressContainerView.backgroundColor = [UIColor purpleColor];
     [self addSubview:self.progressContainerView];
     
-    // loaded view
+    // buffer view
     self.bufferedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, 0, self.progressContainerView.frame.size.height)];
     self.bufferedView.layer.cornerRadius = 2.5;
     self.bufferedView.clipsToBounds = true;
@@ -335,7 +334,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     [self.progressContainerView addSubview:self.playedView];
     
     // drag idot
-    self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(-10, -7.5, 20, 20)];
+    self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, -7.5, 20, 20)];
     self.idotImageView.layer.cornerRadius = 10.0;
     self.idotImageView.clipsToBounds = true;
     self.idotImageView.userInteractionEnabled = true;
@@ -360,8 +359,6 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     //获取偏移量
     CGFloat moveX = [panGes translationInView:self].x;
     
-    NSLog(@"偏移量: %f",moveX);
-    
     //重置偏移量，避免下次获取到的是原基础的增量
     [panGes setTranslation:CGPointMake(0, 0) inView:self];
     
@@ -373,6 +370,12 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
         _idotImageView.centerX = 10;
     }else if (_idotImageView.centerX > self.progressContainerView.bounds.size.width - 10) {
         _idotImageView.centerX = self.progressContainerView.bounds.size.width - 10;
+    }
+
+    NSLog(@"_idotImageView.centerX:%f",_idotImageView.centerX);
+
+    if (panGes.state == UIGestureRecognizerStateEnded) {
+
     }
 }
 

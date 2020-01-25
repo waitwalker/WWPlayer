@@ -44,7 +44,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     //http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4
     //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
     
-    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4"]];
+    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"]];
     self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:playerItem];
     
     AVPlayerLayer *layer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
@@ -160,7 +160,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 - (void)pHiddenPlayerBar {
     // 如果没有隐藏 过 3s 自动隐藏
     if (!self.playerBar.hidden) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(20.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             self.playerBar.hidden = true;
         });
     }
@@ -297,9 +297,9 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     self.currentTimeLabel.text = [NSString stringWithFormat:@"%@",currentStr];
     if (_totalDuration > 0) {
         CGFloat progressScale = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
-        CGFloat width = progressScale * self.progressContainerView.frame.size.width;
-        self.playedView.frame = CGRectMake(0, 0, width + 10, self.progressContainerView.bounds.size.height);
-        self.idotImageView.frame = CGRectMake(width, -7.5, 20, 20);
+        CGFloat width = progressScale * (self.progressContainerView.frame.size.width - 20);
+        self.idotImageView.frameX = width;
+        self.playedView.frameWidth = self.idotImageView.frameX + 5;
     }
 }
 
@@ -350,14 +350,14 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     self.idotImageView.backgroundColor = [UIColor yellowColor];
     [self.progressContainerView addSubview:self.idotImageView];
 
-    self.currentTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 8, 50, 20)];
+    self.currentTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 20, 8, 50, 20)];
     self.currentTimeLabel.textColor = [UIColor whiteColor];
     self.currentTimeLabel.textAlignment= NSTextAlignmentLeft;
     self.currentTimeLabel.font = [UIFont systemFontOfSize:10];
     self.currentTimeLabel.text = @"00:00";
     [self addSubview:self.currentTimeLabel];
 
-    self.totalTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 15, 50, 30)];
+    self.totalTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 20, 15, 50, 30)];
     self.totalTimeLabel.textColor = [UIColor whiteColor];
     self.totalTimeLabel.textAlignment= NSTextAlignmentLeft;
     self.totalTimeLabel.font = [UIFont systemFontOfSize:10];
@@ -399,10 +399,10 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     } else if (_idotImageView.centerX > self.progressContainerView.bounds.size.width - 10) {
         _idotImageView.centerX = self.progressContainerView.bounds.size.width - 10;
     }
-
+    self.playedView.frameWidth = self.idotImageView.frameX + 5;
     CGFloat X = _idotImageView.centerX - 10;
-    if (X >= self.progressContainerView.bounds.size.width - 20) {
-        X += 20;
+    if (X >= self.progressContainerView.bounds.size.width - 10) {
+        X += 10;
     }
     CGFloat progressScale = X / self.progressContainerView.frame.size.width;
     CGFloat currentTime = progressScale * self.totalDuration;

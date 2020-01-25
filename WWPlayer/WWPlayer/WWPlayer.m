@@ -276,7 +276,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 - (void)setTotalLoadedTime:(float)totalLoadedTime {
     _totalLoadedTime = totalLoadedTime;
     if (_totalDuration > 0) {
-        self.bufferedView.frame = CGRectMake(0, self.progressContainerView.bounds.origin.y, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, self.progressContainerView.bounds.size.height);
+        self.bufferedView.frame = CGRectMake(0, 0, (totalLoadedTime / self.totalDuration) * self.progressContainerView.bounds.size.width, self.progressContainerView.bounds.size.height);
     }
 }
 
@@ -287,9 +287,9 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 - (void)setCurrentTime:(NSInteger)currentTime {
     _currentTime = currentTime;
     if (_totalDuration > 0) {
-        CGFloat progress = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
-        CGFloat width = progress * self.progressContainerView.frame.size.width;
-        self.playedView.frame = CGRectMake(0, self.progressContainerView.bounds.origin.y, width + 10, self.progressContainerView.bounds.size.height);
+        CGFloat progressScale = ((CGFloat)currentTime / (CGFloat)self.totalDuration);
+        CGFloat width = progressScale * self.progressContainerView.frame.size.width;
+        self.playedView.frame = CGRectMake(0, 0, width + 10, self.progressContainerView.bounds.size.height);
         self.idotImageView.frame = CGRectMake(width, -7.5, 20, 20);
     }
 }
@@ -320,14 +320,14 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     [self addSubview:self.progressContainerView];
     
     // buffer view
-    self.bufferedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, 0, self.progressContainerView.frame.size.height)];
+    self.bufferedView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 0, self.progressContainerView.frame.size.height)];
     self.bufferedView.layer.cornerRadius = 2.5;
     self.bufferedView.clipsToBounds = true;
     self.bufferedView.backgroundColor = [UIColor redColor];
     [self.progressContainerView addSubview:self.bufferedView];
     
     // played view
-    self.playedView = [[UIView alloc]initWithFrame:CGRectMake(self.progressContainerView.bounds.origin.x, self.progressContainerView.bounds.origin.y, 0, self.progressContainerView.frame.size.height)];
+    self.playedView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 0, self.progressContainerView.frame.size.height)];
     self.playedView.layer.cornerRadius = 2.5;
     self.playedView.clipsToBounds = true;
     self.playedView.backgroundColor = [UIColor blueColor];
@@ -368,14 +368,18 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     _idotImageView.centerX = centerX;
     if (_idotImageView.centerX < 10) {
         _idotImageView.centerX = 10;
-    }else if (_idotImageView.centerX > self.progressContainerView.bounds.size.width - 10) {
+    } else if (_idotImageView.centerX > self.progressContainerView.bounds.size.width - 10) {
         _idotImageView.centerX = self.progressContainerView.bounds.size.width - 10;
     }
 
-    NSLog(@"_idotImageView.centerX:%f",_idotImageView.centerX);
-
-    if (panGes.state == UIGestureRecognizerStateEnded) {
-
+    CGFloat X = _idotImageView.centerX - 10;
+    if (X >= self.progressContainerView.bounds.size.width - 20) {
+        X += 20;
+    }
+    CGFloat progressScale = X / self.progressContainerView.frame.size.width;
+    CGFloat currentTime = progressScale * self.totalDuration;
+    if (panGes.state == UIGestureRecognizerStateEnded && self.delegate && [self.delegate respondsToSelector:@selector(dDraggedProgress:)]) {
+        [self.delegate dDraggedProgress:@{@"currentTime":@(currentTime)}];
     }
 }
 

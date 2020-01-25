@@ -11,9 +11,9 @@
 @interface WWPlayer()<WWPlayerBarDelegate>
 @property (nonatomic, strong) WWPlayerBar *playerBar;
 @property (nonatomic, strong) AVPlayer *avPlayer;
-@property (nonatomic, assign) BOOL isReady;
-@property (nonatomic, assign) BOOL isPlaying;
-@property (nonatomic, assign) BOOL isDraggedPaues;
+@property (nonatomic, assign) BOOL isReady; //是否可以播放
+@property (nonatomic, assign) BOOL isPlaying; //是否正在播放
+@property (nonatomic, assign) BOOL isDraggedPaues; //是否由于拖动引起暂停
 @property (nonatomic, strong) UIActivityIndicatorView *activityView;
 @end
 
@@ -21,6 +21,11 @@
 static NSString * const kPlayStatusPlay = @"kPlayStatus_Play";
 // play status:pause
 static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
+
+// screen full
+static NSString * const kScreenStatusFull = @"kScreenStatusFull";
+// screen not full
+static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 
 @implementation WWPlayer
 - (instancetype)initWithFrame:(CGRect)frame {
@@ -240,6 +245,15 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     }
 }
 
+- (void)dTappedFullButton:(NSDictionary *)info {
+    NSString *screenStatus = info[@"screenStatus"];
+    if ([screenStatus isEqualToString:kScreenStatusFull]) {
+
+    } else {
+
+    }
+}
+
 /**
 * @description dealloc resource
 * @author waitwalker
@@ -270,6 +284,7 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
 // MARK: Player Bar
 @interface WWPlayerBar()
 @property (nonatomic, strong) UIButton *playButton;
+@property (nonatomic, strong) UIButton *fullButton;
 @property (nonatomic, strong) UIView *progressContainerView;
 @property (nonatomic, strong) UIView *bufferedView;
 @property (nonatomic, strong) UIView *playedView;
@@ -375,18 +390,25 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     self.idotImageView.backgroundColor = [UIColor yellowColor];
     [self.progressContainerView addSubview:self.idotImageView];
 
-    self.currentTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 20, 8, 50, 20)];
+    self.currentTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 8, 50, 20)];
     self.currentTimeLabel.textColor = [UIColor whiteColor];
     self.currentTimeLabel.textAlignment= NSTextAlignmentLeft;
     self.currentTimeLabel.font = [UIFont systemFontOfSize:10];
     self.currentTimeLabel.text = @"00:00";
     [self addSubview:self.currentTimeLabel];
 
-    self.totalTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 20, 15, 50, 30)];
+    self.totalTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 15, 50, 30)];
     self.totalTimeLabel.textColor = [UIColor whiteColor];
     self.totalTimeLabel.textAlignment= NSTextAlignmentLeft;
     self.totalTimeLabel.font = [UIFont systemFontOfSize:10];
     [self addSubview:self.totalTimeLabel];
+
+    // full button
+    self.fullButton = [[UIButton alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 10, 30, 30)];
+    [self.fullButton setTitle:@"大" forState:UIControlStateNormal];
+    [self.fullButton setBackgroundColor:[UIColor greenColor]];
+    [self.fullButton addTarget:self action:@selector(fullButtonActionCallBack:) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.fullButton];
 }
 
 /**
@@ -459,6 +481,25 @@ static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
     if (self.delegate && [self.delegate respondsToSelector:@selector(dTappedPlayButton:)]) {
         NSString *playStatus = self.playButton.selected ? kPlayStatusPlay : kPlayStatusPause;
         [self.delegate dTappedPlayButton:@{@"playStatus":playStatus}];
+    }
+}
+
+/**
+* @description full button tap call back
+* @author waitwalker
+* @date 2020.1.25
+* @parameter
+*/
+- (void)fullButtonActionCallBack:(UIButton *)button {
+    self.fullButton.selected = !self.fullButton.selected;
+    if (self.fullButton.selected) {
+        [button setTitle:@"小" forState:UIControlStateNormal];
+    } else {
+        [button setTitle:@"大" forState:UIControlStateNormal];
+    }
+    if (self.delegate && [self.delegate respondsToSelector:@selector(dTappedFullButton:)]) {
+        NSString *screenStatus = self.fullButton.selected ? kScreenStatusFull : kScreenStatusNotFull;
+        [self.delegate dTappedFullButton:@{@"screenStatus":screenStatus}];
     }
 }
 

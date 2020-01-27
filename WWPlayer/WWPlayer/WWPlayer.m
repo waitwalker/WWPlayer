@@ -413,7 +413,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
-        self.backgroundColor = [[UIColor orangeColor]colorWithAlphaComponent:0.3];
+        self.backgroundColor = [[UIColor colorWithRed:51.0/255 green:153.0/255 blue:255.0/255 alpha:1.0]colorWithAlphaComponent:0.25];
         [self pSetupSubviews];
         [self pSetupDragAction];
     }

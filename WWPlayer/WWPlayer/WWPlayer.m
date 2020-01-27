@@ -429,21 +429,21 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     // progress container 
     self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(60, 23.5, self.bounds.size.width - 60 - 100, 3)];
     self.progressContainerView.layer.cornerRadius = 1.5;
-    self.progressContainerView.backgroundColor = [UIColor purpleColor];
+    self.progressContainerView.backgroundColor = [[UIColor grayColor]colorWithAlphaComponent:0.3];
     [self addSubview:self.progressContainerView];
     
     // buffer view
     self.bufferedView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 0, self.progressContainerView.frame.size.height)];
     self.bufferedView.layer.cornerRadius = 2.5;
     self.bufferedView.clipsToBounds = true;
-    self.bufferedView.backgroundColor = [UIColor redColor];
+    self.bufferedView.backgroundColor = [[UIColor grayColor]colorWithAlphaComponent:0.9];
     [self.progressContainerView addSubview:self.bufferedView];
     
     // played view
     self.playedView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 0, self.progressContainerView.frame.size.height)];
     self.playedView.layer.cornerRadius = 2.5;
     self.playedView.clipsToBounds = true;
-    self.playedView.backgroundColor = [UIColor blueColor];
+    self.playedView.backgroundColor = [UIColor whiteColor];
     [self.progressContainerView addSubview:self.playedView];
     
     // drag idot
@@ -597,7 +597,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     if (self.fullButton.selected) {
         [button setImage:[self imageName:@"player_exit_fullscreen@2x"] forState:UIControlStateNormal];
     } else {
-        [button setImage:[self imageName:@"player_exit_fullscreen@2x"] forState:UIControlStateNormal];
+        [button setImage:[self imageName:@"player_enter_fullscreen@2x"] forState:UIControlStateNormal];
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(dTappedFullButton:)]) {
         NSString *screenStatus = self.fullButton.selected ? kScreenStatusFull : kScreenStatusNotFull;

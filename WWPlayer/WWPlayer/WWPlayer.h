@@ -98,6 +98,14 @@ NS_ASSUME_NONNULL_BEGIN
 * @parameter
 */
 - (void)seekToBegin;
+
+/**
+ * @description play
+ * @author waitwalker
+ * @date 2020.1.27
+ * @parameter
+ */
+- (void)play;
 @end
 
 // MARK: UIView Category

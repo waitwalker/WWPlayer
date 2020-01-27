@@ -17,6 +17,7 @@
 @property (nonatomic, strong) UIActivityIndicatorView *activityView; //加载圈
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, assign) CGRect originalFrame;
+@property (nonatomic, strong) UIButton *coverButton;
 
 @end
 
@@ -39,6 +40,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
         [self pSetupPlayerBar];
         [self pSetupTapAction];
         [self pSetupActivity];
+        [self pSetupPlayerCoverButton];
     }
     return self;
 }
@@ -158,6 +160,29 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 }
 
 /**
+* @description setup player bar
+* @author waitwalker
+* @date 2020.1.20
+* @parameter
+*/
+- (void)pSetupPlayerCoverButton {
+    self.coverButton = [[UIButton alloc]initWithFrame:CGRectMake((self.bounds.size.width - 70) / 2, (self.bounds.size.height - 70) / 2, 70, 70)];
+    [self.coverButton setImage:[self imageName:@"player_play_cover@2x"] forState:UIControlStateNormal];
+    [self.coverButton addTarget:self action:@selector(coverButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.coverButton];
+}
+
+- (void)coverButtonAction:(UIButton *)button {
+    [self.playerBar play];
+}
+
+- (UIImage *)imageName:(NSString *)name{
+    NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"icons" ofType:@"bundle"]];
+    NSString *path = [bundle pathForResource:name ofType:@"png"];
+    return [[UIImage imageWithContentsOfFile:path] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
+}
+
+/**
 * @description setup player tap action
 * @author waitwalker
 * @date 2020.1.20
@@ -211,6 +236,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     if (self && self.avPlayer) {
         [self.avPlayer play];
         self.isPlaying = true;
+        self.coverButton.hidden = true;
     } else {
         self.isPlaying = false;
         NSLog(@"播放遇到问题");
@@ -220,6 +246,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 - (void)pause {
     if (self && self.avPlayer) {
         [self.avPlayer pause];
+        self.coverButton.hidden = false;
     } else {
         NSLog(@"暂停遇到问题");
     }
@@ -312,6 +339,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.frame = CGRectMake(0, 0, MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height), MAX([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height));
     self.playerLayer.frame = self.bounds;
     self.playerBar.frame = CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50);
+    self.coverButton.frame = CGRectMake((self.bounds.size.width - 70) / 2, (self.bounds.size.height - 70) / 2, 70, 70);
     [self.playerBar enterFullScreen];
 }
 
@@ -328,6 +356,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.frame = self.originalFrame;
     self.playerLayer.frame = self.bounds;
     self.playerBar.frame = CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50);
+    self.coverButton.frame = CGRectMake((self.bounds.size.width - 70) / 2, (self.bounds.size.height - 70) / 2, 70, 70);
     [self.playerBar exitFullScreen];
 }
 
@@ -433,6 +462,10 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     if (self.playButton) {
         [self.playButton sendActionsForControlEvents:UIControlEventTouchUpInside];
     }
+}
+
+- (void)play {
+    [self.playButton sendActionsForControlEvents:UIControlEventTouchUpInside];
 }
 
 /**

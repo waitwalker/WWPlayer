@@ -422,8 +422,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     
     // play button
     self.playButton = [[UIButton alloc]initWithFrame:CGRectMake(10, 5, 40, 40)];
-    [self.playButton setTitle:@"播" forState:UIControlStateNormal];
-    [self.playButton setBackgroundColor:[UIColor greenColor]];
+    [self.playButton setImage:[self imageName:@"player_play@2x"] forState:UIControlStateNormal];
     [self.playButton addTarget:self action:@selector(playButtonActionCallBack:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.playButton];
     
@@ -470,8 +469,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 
     // full button
     self.fullButton = [[UIButton alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 10, 30, 30)];
-    [self.fullButton setTitle:@"大" forState:UIControlStateNormal];
-    [self.fullButton setBackgroundColor:[UIColor greenColor]];
+    [self.fullButton setImage:[self imageName:@"player_enter_fullscreen@2x"] forState:UIControlStateNormal];
     [self.fullButton addTarget:self action:@selector(fullButtonActionCallBack:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.fullButton];
 }
@@ -578,9 +576,9 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 - (void)playButtonActionCallBack:(UIButton *)button {
     self.playButton.selected = !self.playButton.selected;
     if (self.playButton.selected) {
-        [button setTitle:@"停" forState:UIControlStateNormal];
+        [self.playButton setImage:[self imageName:@"player_pause@2x"] forState:UIControlStateNormal];
     } else {
-        [button setTitle:@"播" forState:UIControlStateNormal];
+        [self.playButton setImage:[self imageName:@"player_play@2x"] forState:UIControlStateNormal];
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(dTappedPlayButton:)]) {
         NSString *playStatus = self.playButton.selected ? kPlayStatusPlay : kPlayStatusPause;
@@ -597,9 +595,9 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 - (void)fullButtonActionCallBack:(UIButton *)button {
     self.fullButton.selected = !self.fullButton.selected;
     if (self.fullButton.selected) {
-        [button setTitle:@"小" forState:UIControlStateNormal];
+        [button setImage:[self imageName:@"player_exit_fullscreen@2x"] forState:UIControlStateNormal];
     } else {
-        [button setTitle:@"大" forState:UIControlStateNormal];
+        [button setImage:[self imageName:@"player_exit_fullscreen@2x"] forState:UIControlStateNormal];
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(dTappedFullButton:)]) {
         NSString *screenStatus = self.fullButton.selected ? kScreenStatusFull : kScreenStatusNotFull;
@@ -621,6 +619,12 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     //format of time
     NSString *format_time = [NSString stringWithFormat:@"%@:%@",str_minute,str_second];
     return format_time;
+}
+
+- (UIImage *)imageName:(NSString *)name{
+    NSBundle *bundle = [NSBundle bundleWithPath:[[NSBundle bundleForClass:[self class]] pathForResource:@"icons" ofType:@"bundle"]];
+    NSString *path = [bundle pathForResource:name ofType:@"png"];
+    return [[UIImage imageWithContentsOfFile:path] imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal];
 }
 
 @end

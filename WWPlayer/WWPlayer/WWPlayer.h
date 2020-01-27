@@ -74,8 +74,30 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) float totalLoadedTime;
 @property (nonatomic, assign) NSInteger totalDuration;
 @property (nonatomic, assign) NSInteger currentTime;
+
+/**
+* @description enter full screen
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
 - (void)enterFullScreen;
+
+/**
+* @description exit full screen
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
 - (void)exitFullScreen;
+
+/**
+* @description seek to begin
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
+- (void)seekToBegin;
 @end
 
 // MARK: UIView Category

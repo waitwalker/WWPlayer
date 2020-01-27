@@ -74,6 +74,11 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     
     // 监听缓冲是否可以播放
     [self.avPlayer.currentItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+    selector:@selector(playerPlayDidEnd:)
+        name:AVPlayerItemDidPlayToEndTimeNotification
+      object:playerItem];
     
     // 当前播放时间监听
     __weak __typeof(self) weakSelf = self;
@@ -86,6 +91,13 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
         strongSelf.playerBar.currentTime = currentTime;
         strongSelf.playerBar.totalDuration = durationTime;
     }];
+}
+
+- (void)playerPlayDidEnd:(NSNotification *)notification {
+    if (self.avPlayer) {
+        [self.avPlayer seekToTime:CMTimeMake(0, 1)];
+        [self.playerBar seekToBegin];
+    }
 }
 
 /**
@@ -335,6 +347,11 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     if (self.activityView) {
         self.activityView = nil;
     }
+
+    if (self.playerBar) {
+        [self.playerBar removeFromSuperview];
+        self.playerBar = nil;
+    }
     
     [self.avPlayer.currentItem removeObserver:self forKeyPath:@"status"];
     [self.avPlayer.currentItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
@@ -410,6 +427,12 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 
 - (NSInteger)currentTime {
     return _currentTime;
+}
+
+- (void)seekToBegin {
+    if (self.playButton) {
+        [self.playButton sendActionsForControlEvents:UIControlEventTouchUpInside];
+    }
 }
 
 /**

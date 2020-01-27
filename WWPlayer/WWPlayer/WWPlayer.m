@@ -251,17 +251,24 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     NSString *screenStatus = info[@"screenStatus"];
     // 全屏
     if ([screenStatus isEqualToString:kScreenStatusFull]) {
+        //添加到Window上
+        UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+        [keyWindow addSubview:self];
+
         [UIView animateWithDuration:0.25 animations:^{
-            self.frame = CGRectMake(0, 0, MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height), MAX([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height));
             self.transform = CGAffineTransformMakeRotation(M_PI / 2);
-            [self setNeedsLayout];
-            [self layoutIfNeeded];
+
         }];
+        self.frame = CGRectMake(0, 0, MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height), MAX([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height));
     } else {
         [UIView animateWithDuration:0.25 animations:^{
+
             self.transform = CGAffineTransformMakeRotation(0);
         }];
+        self.frame = self.originalFrame;
     }
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
 }
 
 

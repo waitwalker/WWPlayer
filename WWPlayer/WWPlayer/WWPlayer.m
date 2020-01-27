@@ -293,6 +293,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 
     }];
     self.frame = CGRectMake(0, 0, MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height), MAX([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height));
+    self.playerLayer.frame = self.bounds;
     [self setNeedsLayout];
     [self layoutIfNeeded];
 }
@@ -303,6 +304,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
         self.transform = CGAffineTransformMakeRotation(0);
     }];
     self.frame = self.originalFrame;
+    self.playerLayer.frame = self.bounds;
     [self setNeedsLayout];
     [self layoutIfNeeded];
 }

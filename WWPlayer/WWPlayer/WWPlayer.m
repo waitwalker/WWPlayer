@@ -295,8 +295,12 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.frame = CGRectMake(0, 0, MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height), MAX([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height));
     self.playerLayer.frame = self.bounds;
     self.playerBar.frame = CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50);
+    [self.playerBar enterFullScreen];
     [self setNeedsLayout];
     [self layoutIfNeeded];
+    [self.playerBar setNeedsLayout];
+    [self.playerBar layoutIfNeeded];
+
 }
 
 - (void)pExitFullAction {
@@ -306,8 +310,12 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.frame = self.originalFrame;
     self.playerLayer.frame = self.bounds;
     self.playerBar.frame = CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50);
+    [self.playerBar exitFullScreen];
     [self setNeedsLayout];
     [self layoutIfNeeded];
+    [self.playerBar setNeedsLayout];
+    [self.playerBar layoutIfNeeded];
+
 }
 
 
@@ -466,6 +474,28 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     [self.fullButton setBackgroundColor:[UIColor greenColor]];
     [self.fullButton addTarget:self action:@selector(fullButtonActionCallBack:) forControlEvents:UIControlEventTouchUpInside];
     [self addSubview:self.fullButton];
+}
+
+- (void)enterFullScreen {
+    self.playButton.frame =  CGRectMake(50, 5, 40, 40);
+    self.progressContainerView.frame = CGRectMake(100, 22.5, self.bounds.size.width - 100 - 140, 5);
+    [self setTotalDuration:self.totalDuration];
+    [self setTotalLoadedTime:self.totalLoadedTime];
+    [self setCurrentTime:self.currentTime];
+    self.currentTimeLabel.frame = CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 8, 50, 20);
+    self.totalTimeLabel.frame = CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 15, 50, 30);
+    self.fullButton.frame = CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 10, 30, 30);
+}
+
+- (void)exitFullScreen {
+    self.playButton.frame =  CGRectMake(10, 5, 40, 40);
+    self.progressContainerView.frame = CGRectMake(60, 22.5, self.bounds.size.width - 60 - 100, 5);
+    [self setTotalDuration:self.totalDuration];
+    [self setTotalLoadedTime:self.totalLoadedTime];
+    [self setCurrentTime:self.currentTime];
+    self.currentTimeLabel.frame = CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 8, 50, 20);
+    self.totalTimeLabel.frame = CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 15, 50, 30);
+    self.fullButton.frame = CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 10, 30, 30);
 }
 
 /**

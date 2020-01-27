@@ -443,7 +443,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.playedView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, 0, self.progressContainerView.frame.size.height)];
     self.playedView.layer.cornerRadius = 2.5;
     self.playedView.clipsToBounds = true;
-    self.playedView.backgroundColor = [UIColor whiteColor];
+    self.playedView.backgroundColor = [[UIColor colorWithRed:51.0/255 green:153.0/255 blue:255.0/255 alpha:1.0]colorWithAlphaComponent:0.9];
     [self.progressContainerView addSubview:self.playedView];
     
     // drag idot

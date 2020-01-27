@@ -280,9 +280,14 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     } else {
         [self pExitFullAction];
     }
-
 }
 
+/**
+* @description enter full screen
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
 - (void)pEnterFullAction {
     //添加到Window上
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
@@ -296,13 +301,14 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.playerLayer.frame = self.bounds;
     self.playerBar.frame = CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50);
     [self.playerBar enterFullScreen];
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-    [self.playerBar setNeedsLayout];
-    [self.playerBar layoutIfNeeded];
-
 }
 
+/**
+* @description exit full screen
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
 - (void)pExitFullAction {
     [UIView animateWithDuration:0.25 animations:^{
         self.transform = CGAffineTransformMakeRotation(0);
@@ -311,11 +317,6 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.playerLayer.frame = self.bounds;
     self.playerBar.frame = CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50);
     [self.playerBar exitFullScreen];
-    [self setNeedsLayout];
-    [self layoutIfNeeded];
-    [self.playerBar setNeedsLayout];
-    [self.playerBar layoutIfNeeded];
-
 }
 
 
@@ -340,7 +341,6 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     [self.avPlayer.currentItem removeObserver:self forKeyPath:@"playbackBufferEmpty"];
     [self.avPlayer.currentItem removeObserver:self forKeyPath:@"playbackLikelyToKeepUp"];
 }
-
 @end
 
 
@@ -476,20 +476,37 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     [self addSubview:self.fullButton];
 }
 
+/**
+* @description enter full screen
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
 - (void)enterFullScreen {
     self.playButton.frame =  CGRectMake(50, 5, 40, 40);
     self.progressContainerView.frame = CGRectMake(100, 22.5, self.bounds.size.width - 100 - 140, 5);
-    [self setTotalDuration:self.totalDuration];
-    [self setTotalLoadedTime:self.totalLoadedTime];
-    [self setCurrentTime:self.currentTime];
-    self.currentTimeLabel.frame = CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 8, 50, 20);
-    self.totalTimeLabel.frame = CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 15, 50, 30);
-    self.fullButton.frame = CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 10, 30, 30);
+    [self pLayoutSubviews];
 }
 
+/**
+* @description exit full screen
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
 - (void)exitFullScreen {
     self.playButton.frame =  CGRectMake(10, 5, 40, 40);
     self.progressContainerView.frame = CGRectMake(60, 22.5, self.bounds.size.width - 60 - 100, 5);
+    [self pLayoutSubviews];
+}
+
+/**
+* @description relayout subviews
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
+- (void)pLayoutSubviews {
     [self setTotalDuration:self.totalDuration];
     [self setTotalLoadedTime:self.totalLoadedTime];
     [self setCurrentTime:self.currentTime];

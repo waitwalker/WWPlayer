@@ -427,8 +427,8 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     [self addSubview:self.playButton];
     
     // progress container 
-    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(60, 22.5, self.bounds.size.width - 60 - 100, 5)];
-    self.progressContainerView.layer.cornerRadius = 2.5;
+    self.progressContainerView = [[UIView alloc]initWithFrame:CGRectMake(60, 23.5, self.bounds.size.width - 60 - 100, 3)];
+    self.progressContainerView.layer.cornerRadius = 1.5;
     self.progressContainerView.backgroundColor = [UIColor purpleColor];
     [self addSubview:self.progressContainerView];
     
@@ -447,11 +447,11 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     [self.progressContainerView addSubview:self.playedView];
     
     // drag idot
-    self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, -7.5, 20, 20)];
-    self.idotImageView.layer.cornerRadius = 10.0;
+    self.idotImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, -12.5, 25, 25)];
+    self.idotImageView.layer.cornerRadius = 12.5;
     self.idotImageView.clipsToBounds = true;
     self.idotImageView.userInteractionEnabled = true;
-    self.idotImageView.backgroundColor = [UIColor yellowColor];
+    self.idotImageView.backgroundColor = [UIColor whiteColor];
     [self.progressContainerView addSubview:self.idotImageView];
 
     self.currentTimeLabel = [[UILabel alloc]initWithFrame:CGRectMake(CGRectGetMaxX(self.progressContainerView.frame) + 10, 8, 50, 20)];
@@ -482,7 +482,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 */
 - (void)enterFullScreen {
     self.playButton.frame =  CGRectMake(50, 5, 40, 40);
-    self.progressContainerView.frame = CGRectMake(100, 22.5, self.bounds.size.width - 100 - 140, 5);
+    self.progressContainerView.frame = CGRectMake(100, 23.5, self.bounds.size.width - 100 - 140, 3);
     [self pLayoutSubviews];
 }
 
@@ -494,7 +494,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 */
 - (void)exitFullScreen {
     self.playButton.frame =  CGRectMake(10, 5, 40, 40);
-    self.progressContainerView.frame = CGRectMake(60, 22.5, self.bounds.size.width - 60 - 100, 5);
+    self.progressContainerView.frame = CGRectMake(60, 23.5, self.bounds.size.width - 60 - 100, 3);
     [self pLayoutSubviews];
 }
 

@@ -253,7 +253,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
         }];
     } else {
         [UIView animateWithDuration:0.25 animations:^{
-            self.transform = CGAffineTransformMakeRotation(-M_PI / 2);
+            self.transform = CGAffineTransformMakeRotation(0);
         }];
     }
 }

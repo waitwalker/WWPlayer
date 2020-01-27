@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1A41BE6523DEDC9000191EDE /* icons.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 1A41BE6423DEDC9000191EDE /* icons.bundle */; };
 		BFB8B65823D54BEF00DA036F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB8B65723D54BEF00DA036F /* AppDelegate.m */; };
 		BFB8B65B23D54BEF00DA036F /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB8B65A23D54BEF00DA036F /* SceneDelegate.m */; };
 		BFB8B65E23D54BEF00DA036F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BFB8B65D23D54BEF00DA036F /* ViewController.m */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1A41BE6423DEDC9000191EDE /* icons.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = icons.bundle; sourceTree = "<group>"; };
 		BFB8B65323D54BEF00DA036F /* WWPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WWPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFB8B65623D54BEF00DA036F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		BFB8B65723D54BEF00DA036F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -84,6 +86,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1A41BE6323DEDC4800191EDE /* resource */ = {
+			isa = PBXGroup;
+			children = (
+				1A41BE6423DEDC9000191EDE /* icons.bundle */,
+			);
+			path = resource;
+			sourceTree = "<group>";
+		};
 		BFB8B64A23D54BEF00DA036F = {
 			isa = PBXGroup;
 			children = (
@@ -144,6 +154,7 @@
 		BFB8B68B23D54CCA00DA036F /* WWPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				1A41BE6323DEDC4800191EDE /* resource */,
 				BFB8B68C23D54D0D00DA036F /* WWPlayer.h */,
 				BFB8B68D23D54D0D00DA036F /* WWPlayer.m */,
 			);
@@ -253,6 +264,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1A41BE6523DEDC9000191EDE /* icons.bundle in Resources */,
 				BFB8B66623D54BF400DA036F /* LaunchScreen.storyboard in Resources */,
 				BFB8B66323D54BF400DA036F /* Assets.xcassets in Resources */,
 				BFB8B66123D54BEF00DA036F /* Main.storyboard in Resources */,

@@ -15,6 +15,7 @@
 @property (nonatomic, assign) BOOL isPlaying; //是否正在播放
 @property (nonatomic, assign) BOOL isDraggedPaues; //是否由于拖动引起暂停
 @property (nonatomic, strong) UIActivityIndicatorView *activityView;
+@property (nonatomic, assign) CGRect originalFrame;
 @end
 
 // play status:play
@@ -31,6 +32,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 - (instancetype)initWithFrame:(CGRect)frame {
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor blackColor];
+        self.originalFrame = frame;
         [self pSetupPlayer];
         [self pSetupPlayerBar];
         [self pSetupTapAction];
@@ -247,9 +249,13 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 
 - (void)dTappedFullButton:(NSDictionary *)info {
     NSString *screenStatus = info[@"screenStatus"];
+    // 全屏
     if ([screenStatus isEqualToString:kScreenStatusFull]) {
         [UIView animateWithDuration:0.25 animations:^{
+            self.frame = CGRectMake(0, 0, MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height), MAX([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height));
             self.transform = CGAffineTransformMakeRotation(M_PI / 2);
+            [self setNeedsLayout];
+            [self layoutIfNeeded];
         }];
     } else {
         [UIView animateWithDuration:0.25 animations:^{
@@ -257,6 +263,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
         }];
     }
 }
+
 
 /**
 * @description dealloc resource

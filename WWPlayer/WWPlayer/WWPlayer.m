@@ -14,8 +14,10 @@
 @property (nonatomic, assign) BOOL isReady; //是否可以播放
 @property (nonatomic, assign) BOOL isPlaying; //是否正在播放
 @property (nonatomic, assign) BOOL isDraggedPaues; //是否由于拖动引起暂停
-@property (nonatomic, strong) UIActivityIndicatorView *activityView;
+@property (nonatomic, strong) UIActivityIndicatorView *activityView; //加载圈
+@property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, assign) CGRect originalFrame;
+
 @end
 
 // play status:play
@@ -56,10 +58,10 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"]];
     self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:playerItem];
     
-    AVPlayerLayer *layer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
-    layer.videoGravity = AVLayerVideoGravityResizeAspect;
-    layer.frame = self.bounds;
-    [self.layer addSublayer:layer];
+    self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
+    self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+    self.playerLayer.frame = self.bounds;
+    [self.layer addSublayer:self.playerLayer];
     
     // 监听播放状态
     [self.avPlayer.currentItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
@@ -182,7 +184,12 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 * @parameter 
 */
 - (void)pSetupActivity {
-    self.activityView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
+    if (@available(iOS 13.0, *)) {
+        self.activityView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
+    } else {
+        // Fallback on earlier versions
+        self.activityView = [[UIActivityIndicatorView alloc]initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    }
     self.activityView.center = CGPointMake(self.bounds.size.width / 2.0, self.bounds.size.height / 2.0);
     [self addSubview:self.activityView];
 }
@@ -227,6 +234,12 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     }
 }
 
+/**
+* @description drag begin call back
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
 - (void)dDragBeganProgress:(NSDictionary *)info {
     if (self.isPlaying && self.avPlayer) {
         [self.avPlayer pause];
@@ -236,6 +249,12 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     }
 }
 
+/**
+* @description drag end call back
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
 - (void)dDragEndedProgress:(NSDictionary *)info {
     CGFloat currentTime = [info[@"currentTime"] floatValue];
     if (self.avPlayer) {
@@ -247,26 +266,43 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     }
 }
 
+/**
+* @description full button call back
+* @author waitwalker
+* @date 2020.1.27
+* @parameter
+*/
 - (void)dTappedFullButton:(NSDictionary *)info {
     NSString *screenStatus = info[@"screenStatus"];
     // 全屏
     if ([screenStatus isEqualToString:kScreenStatusFull]) {
-        //添加到Window上
-        UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
-        [keyWindow addSubview:self];
-
-        [UIView animateWithDuration:0.25 animations:^{
-            self.transform = CGAffineTransformMakeRotation(M_PI / 2);
-
-        }];
-        self.frame = CGRectMake(0, 0, MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height), MAX([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height));
+        [self pEnterFullAction];
     } else {
-        [UIView animateWithDuration:0.25 animations:^{
-
-            self.transform = CGAffineTransformMakeRotation(0);
-        }];
-        self.frame = self.originalFrame;
+        [self pExitFullAction];
     }
+
+}
+
+- (void)pEnterFullAction {
+    //添加到Window上
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    [keyWindow addSubview:self];
+
+    [UIView animateWithDuration:0.25 animations:^{
+        self.transform = CGAffineTransformMakeRotation(M_PI / 2);
+
+    }];
+    self.frame = CGRectMake(0, 0, MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height), MAX([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height));
+    [self setNeedsLayout];
+    [self layoutIfNeeded];
+}
+
+- (void)pExitFullAction {
+    [UIView animateWithDuration:0.25 animations:^{
+
+        self.transform = CGAffineTransformMakeRotation(0);
+    }];
+    self.frame = self.originalFrame;
     [self setNeedsLayout];
     [self layoutIfNeeded];
 }

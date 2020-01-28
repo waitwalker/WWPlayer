@@ -18,6 +18,7 @@
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 @property (nonatomic, assign) CGRect originalFrame;
 @property (nonatomic, strong) UIButton *coverButton;
+@property (nonatomic, strong) UIView *playerBottomView;
 
 @end
 
@@ -42,6 +43,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
         [self pSetupTapAction];
         [self pSetupActivity];
         [self pSetupPlayerCoverButton];
+        [self pSetupPlayerBottomPlayedView];
     }
     return self;
 }
@@ -61,15 +63,11 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
  * @parameter 
  */
 - (void)pSetupPlayer:(NSString *)url {
-    //http://cdn5.hd.etiantian.net/616d59dd8830d7b200a4a711062b9b89/5E257B44/etthd/msgz002041/400.mp4
-    //http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4
-    //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
-    
     AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:url]];
     self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:playerItem];
     
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
-    self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;
+    self.playerLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
     self.playerLayer.frame = self.bounds;
     [self.layer addSublayer:self.playerLayer];
     
@@ -98,9 +96,16 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
         NSInteger durationTime = strongSelf.avPlayer.currentItem.duration.value / strongSelf.avPlayer.currentItem.duration.timescale;
         strongSelf.playerBar.currentTime = currentTime;
         strongSelf.playerBar.totalDuration = durationTime;
+        strongSelf.playerBottomView.frameWidth = (((CGFloat)currentTime) / ((CGFloat)durationTime)) * self.bounds.size.width;
     }];
 }
 
+/**
+* @description observe play end
+* @author waitwalker
+* @date 2020.1.28
+* @parameter
+*/
 - (void)playerPlayDidEnd:(NSNotification *)notification {
     if (self.avPlayer) {
         [self.avPlayer seekToTime:CMTimeMake(0, 1)];
@@ -180,9 +185,9 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 }
 
 /**
-* @description setup player bar
+* @description setup player cover button
 * @author waitwalker
-* @date 2020.1.20
+* @date 2020.1.28
 * @parameter
 */
 - (void)pSetupPlayerCoverButton {
@@ -192,8 +197,27 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     [self addSubview:self.coverButton];
 }
 
+/**
+* @description player cover button call back
+* @author waitwalker
+* @date 2020.1.28
+* @parameter
+*/
 - (void)coverButtonAction:(UIButton *)button {
     [self.playerBar play];
+}
+
+/**
+* @description setup player cover button
+* @author waitwalker
+* @date 2020.1.28
+* @parameter
+*/
+- (void)pSetupPlayerBottomPlayedView {
+    self.playerBottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.bounds.size.height - 2, self.bounds.size.width, 2)];
+    self.playerBottomView.hidden = true;
+    self.playerBottomView.backgroundColor = [UIColor colorWithRed:51.0/255 green:153.0/255 blue:255.0/255 alpha:1.0];
+    [self addSubview:self.playerBottomView];
 }
 
 - (UIImage *)imageName:(NSString *)name{
@@ -216,6 +240,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 
 - (void)tapActionCallBack {
     self.playerBar.hidden = !self.playerBar.hidden;
+    self.playerBottomView.hidden = !self.playerBar.hidden;
     [self pHiddenPlayerBar];
 }
 
@@ -360,6 +385,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.playerLayer.frame = self.bounds;
     self.playerBar.frame = CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50);
     self.coverButton.frame = CGRectMake((self.bounds.size.width - 70) / 2, (self.bounds.size.height - 70) / 2, 70, 70);
+    self.playerBottomView.frame = CGRectMake(0, self.bounds.size.height - 2, (((CGFloat)self.playerBar.currentTime) / ((CGFloat)self.playerBar.totalDuration)) * self.bounds.size.width, 2);
     [self.playerBar enterFullScreen];
 }
 
@@ -377,9 +403,9 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.playerLayer.frame = self.bounds;
     self.playerBar.frame = CGRectMake(0, self.bounds.size.height - 50, self.bounds.size.width, 50);
     self.coverButton.frame = CGRectMake((self.bounds.size.width - 70) / 2, (self.bounds.size.height - 70) / 2, 70, 70);
+    self.playerBottomView.frame = CGRectMake(0, self.bounds.size.height - 2, (((CGFloat)self.playerBar.currentTime) / ((CGFloat)self.playerBar.totalDuration)) * self.bounds.size.width, 2);
     [self.playerBar exitFullScreen];
 }
-
 
 /**
 * @description dealloc resource

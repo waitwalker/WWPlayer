@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "WWPlayer.h"
 
-@interface ViewController ()
+@interface ViewController ()<WWPlayerDelegate>
 
 @end
 
@@ -17,9 +17,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    WWPlayer *player = [[WWPlayer alloc]initWithFrame:CGRectMake(0, 100, [UIScreen mainScreen].bounds.size.width, 300) url:@""];
+    WWPlayer *player = [[WWPlayer alloc]initWithFrame:CGRectMake(0, 100, [UIScreen mainScreen].bounds.size.width, 300) url:@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"];
+    player.delegate = self;
     [self.view addSubview:player];
 }
 
+// MARK: - WWPlayerDelegate call back
+- (void)playerDidError:(NSDictionary *)info {
+
+}
 
 @end

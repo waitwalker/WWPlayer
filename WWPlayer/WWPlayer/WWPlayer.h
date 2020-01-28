@@ -7,9 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
+
+
+// MARK: - player delegate
 @protocol WWPlayerDelegate <NSObject>
 @required
 /**
@@ -19,8 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
 * @parameter
 */
 - (void)playerDidError:(NSDictionary *)info;
-
 @end
+
+
 
 // MARK: player
 @interface WWPlayer : UIView
@@ -39,13 +42,12 @@ NS_ASSUME_NONNULL_BEGIN
 * @parameter 
 */
 - (void)pause;
-
 @property (nonatomic, weak) id<WWPlayerDelegate>delegate;
 @end
 
 
 
-
+// MARK: - player bar delegate
 @protocol WWPlayerBarDelegate <NSObject>
 @required
 /**
@@ -81,6 +83,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)dTappedFullButton:(NSDictionary  * _Nullable)info;
 @end
+
+
 
 // MARK: player bar
 @interface WWPlayerBar : UIView
@@ -122,6 +126,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)play;
 @end
 
+
+
 // MARK: UIView Category
 @interface UIView (Category)
 @property (nonatomic, assign) CGFloat frameX;
@@ -137,8 +143,4 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) CGFloat centerX;
 @property (nonatomic, assign) CGFloat centerY;
 @end
-
-
-
-
 NS_ASSUME_NONNULL_END

@@ -28,6 +28,25 @@ NS_ASSUME_NONNULL_BEGIN
 // MARK: player
 @interface WWPlayer : UIView
 /**
+* @description NS_DESIGNATED_INITIALIZER method
+* @author waitwalker
+* @date 2020.1.28
+* @parameter
+*/
+- (instancetype)initWithFrame:(CGRect)frame url:(NSString *)url NS_DESIGNATED_INITIALIZER;
+
+/**
+* @description NS_UNAVAILABLE methods
+* @author waitwalker
+* @date 2020.1.28
+* @parameter
+*/
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
+- (instancetype)initWithCoder:(NSCoder *)coder NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
+/**
  * @description play
  * @author waitwalker
  * @date 2020.1.20

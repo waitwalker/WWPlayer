@@ -32,17 +32,25 @@ static NSString * const kScreenStatusFull = @"kScreenStatusFull";
 static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 
 @implementation WWPlayer
-- (instancetype)initWithFrame:(CGRect)frame {
+- (instancetype)initWithFrame:(CGRect)frame url:(NSString *)url {
     if (self = [super initWithFrame:frame]) {
         self.backgroundColor = [UIColor blackColor];
+        NSAssert([self verifyUrl:url], @"url must be rightful");
         self.originalFrame = frame;
-        [self pSetupPlayer];
+        [self pSetupPlayer:url];
         [self pSetupPlayerBar];
         [self pSetupTapAction];
         [self pSetupActivity];
         [self pSetupPlayerCoverButton];
     }
     return self;
+}
+
+- (BOOL)verifyUrl:(NSString *)url{
+    if (!url) {
+          return NO;
+    }
+    return [UIApplication.sharedApplication canOpenURL:[NSURL URLWithString:url]];
 }
 
 // MARK: private methods
@@ -52,12 +60,12 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
  * @date 2020.1.20
  * @parameter 
  */
-- (void)pSetupPlayer {
+- (void)pSetupPlayer:(NSString *)url {
     //http://cdn5.hd.etiantian.net/616d59dd8830d7b200a4a711062b9b89/5E257B44/etthd/msgz002041/400.mp4
     //http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4
     //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
     
-    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"rtmp://202.69.69.180:443/webcast/bshdlive-pc"]];
+    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:url]];
     self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:playerItem];
     
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];

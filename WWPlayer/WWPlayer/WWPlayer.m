@@ -57,7 +57,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     //http://vfx.mtime.cn/Video/2019/03/09/mp4/190309153658147087.mp4
     //http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4
     
-    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"]];
+    AVPlayerItem *playerItem = [[AVPlayerItem alloc]initWithURL:[NSURL URLWithString:@"rtmp://202.69.69.180:443/webcast/bshdlive-pc"]];
     self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:playerItem];
     
     self.playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.avPlayer];
@@ -85,11 +85,9 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     // 当前播放时间监听
     __weak __typeof(self) weakSelf = self;
     [self.avPlayer addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:nil usingBlock:^(CMTime time) {
-        __strong __typeof(weakSelf) strongSelf = weakSelf; 
-        NSLog(@"current thread:%@",[NSThread currentThread]);
+        __strong __typeof(weakSelf) strongSelf = weakSelf;
         NSInteger currentTime = strongSelf.avPlayer.currentItem.currentTime.value / strongSelf.avPlayer.currentItem.currentTime.timescale;
         NSInteger durationTime = strongSelf.avPlayer.currentItem.duration.value / strongSelf.avPlayer.currentItem.duration.timescale;
-        NSLog(@"当前播放时间:%ld 总的播放时间:%ld",(long)currentTime,(long)durationTime);
         strongSelf.playerBar.currentTime = currentTime;
         strongSelf.playerBar.totalDuration = durationTime;
     }];
@@ -116,7 +114,12 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
                 self.isReady = true;
                 NSLog(@"可以播放了");
                 break;
-                
+            case AVPlayerItemStatusFailed:
+                self.isReady = false;
+                break;
+            case AVPlayerItemStatusUnknown:
+                self.isReady = false;
+                break;
             default:
                 self.isReady = false;
                 NSLog(@"不可以播放");

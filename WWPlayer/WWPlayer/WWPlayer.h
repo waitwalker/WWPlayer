@@ -10,6 +10,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol WWPlayerDelegate <NSObject>
+@required
+/**
+* @description play error 
+* @author waitwalker
+* @date 2020.1.28
+* @parameter
+*/
+- (void)playerDidError:(NSDictionary *)info;
+
+@end
+
 // MARK: player
 @interface WWPlayer : UIView
 /**
@@ -27,6 +39,8 @@ NS_ASSUME_NONNULL_BEGIN
 * @parameter 
 */
 - (void)pause;
+
+@property (nonatomic, weak) id<WWPlayerDelegate>delegate;
 @end
 
 

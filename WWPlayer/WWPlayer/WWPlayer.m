@@ -109,6 +109,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSKeyValueChangeKey,id> *)change context:(void *)context {
     if ([keyPath isEqualToString:@"status"]) {
         AVPlayerItemStatus currentStatus = [change[NSKeyValueChangeNewKey]integerValue];
+        NSDictionary *info;
         switch (currentStatus) {
             case AVPlayerItemStatusReadyToPlay:
                 self.isReady = true;
@@ -116,9 +117,17 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
                 break;
             case AVPlayerItemStatusFailed:
                 self.isReady = false;
+                info = @{@"error":@"AVPlayerItemStatusFailed"};
+                if (self.delegate && [self.delegate respondsToSelector:@selector(playerDidError:)]) {
+                    [self.delegate playerDidError:info];
+                }
                 break;
             case AVPlayerItemStatusUnknown:
                 self.isReady = false;
+                info = @{@"error":@"AVPlayerItemStatusUnknown"};
+                if (self.delegate && [self.delegate respondsToSelector:@selector(playerDidError:)]) {
+                    [self.delegate playerDidError:info];
+                }
                 break;
             default:
                 self.isReady = false;

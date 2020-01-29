@@ -9,24 +9,22 @@
 #import "WWPlayer.h"
 #import <AVFoundation/AVFoundation.h>
 @interface WWPlayer()<WWPlayerBarDelegate>
-@property (nonatomic, strong) WWPlayerBar *playerBar;
-@property (nonatomic, strong) AVPlayer *avPlayer;
-@property (nonatomic, assign) BOOL isReady; //是否可以播放
-@property (nonatomic, assign) BOOL isPlaying; //是否正在播放
-@property (nonatomic, assign) BOOL isDraggedPaues; //是否由于拖动引起暂停
+@property (nonatomic, strong) WWPlayerBar  *playerBar; //播放bar,包括:播放按钮,进度条等
+@property (nonatomic, strong) AVPlayer     *avPlayer; //播放器
+@property (nonatomic, assign) BOOL         isReady; //是否可以播放
+@property (nonatomic, assign) BOOL         isPlaying; //是否正在播放
+@property (nonatomic, assign) BOOL         isDraggedPaues; //是否由于拖动引起暂停
 @property (nonatomic, strong) UIActivityIndicatorView *activityView; //加载圈
-@property (nonatomic, strong) AVPlayerLayer *playerLayer;
-@property (nonatomic, assign) CGRect originalFrame;
-@property (nonatomic, strong) UIButton *coverButton;
-@property (nonatomic, strong) UIView *playerBottomView;
-
+@property (nonatomic, strong) AVPlayerLayer *playerLayer; //播放图层
+@property (nonatomic, assign) CGRect        originalFrame; //初始化的frame
+@property (nonatomic, strong) UIButton      *coverButton; //中间封面播放按钮
+@property (nonatomic, strong) UIView        *playerBottomView; //底部播放进度显示条
 @end
 
 // play status:play
 static NSString * const kPlayStatusPlay = @"kPlayStatus_Play";
 // play status:pause
 static NSString * const kPlayStatusPause = @"kPlayStatus_Pause";
-
 // screen full
 static NSString * const kScreenStatusFull = @"kScreenStatusFull";
 // screen not full
@@ -48,6 +46,13 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     return self;
 }
 
+// MARK: verify Url
+/**
+ * @description setup player
+ * @author waitwalker
+ * @date 2020.1.29
+ * @parameter
+ */
 - (BOOL)verifyUrl:(NSString *)url{
     if (!url) {
           return NO;
@@ -216,7 +221,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
 - (void)pSetupPlayerBottomPlayedView {
     self.playerBottomView = [[UIView alloc]initWithFrame:CGRectMake(0, self.bounds.size.height - 2, self.bounds.size.width, 2)];
     self.playerBottomView.hidden = true;
-    self.playerBottomView.backgroundColor = [UIColor colorWithRed:51.0/255 green:153.0/255 blue:255.0/255 alpha:1.0];
+    self.playerBottomView.backgroundColor = [UIColor redColor];//[UIColor colorWithRed:51.0/255 green:153.0/255 blue:255.0/255 alpha:1.0];
     [self addSubview:self.playerBottomView];
 }
 

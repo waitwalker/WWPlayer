@@ -567,6 +567,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     self.totalTimeLabel.textColor = [UIColor whiteColor];
     self.totalTimeLabel.textAlignment= NSTextAlignmentLeft;
     self.totalTimeLabel.font = [UIFont systemFontOfSize:10];
+    self.totalTimeLabel.text = @"00:00";
     [self addSubview:self.totalTimeLabel];
 
     // full button

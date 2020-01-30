@@ -88,6 +88,7 @@ static NSString * const kScreenStatusNotFull = @"kScreenStatusNotFull";
     // 监听缓冲是否可以播放
     [self.avPlayer.currentItem addObserver:self forKeyPath:@"playbackLikelyToKeepUp" options:NSKeyValueObservingOptionNew context:nil];
 
+    // 监听播放完成
     [[NSNotificationCenter defaultCenter] addObserver:self
     selector:@selector(playerPlayDidEnd:)
         name:AVPlayerItemDidPlayToEndTimeNotification

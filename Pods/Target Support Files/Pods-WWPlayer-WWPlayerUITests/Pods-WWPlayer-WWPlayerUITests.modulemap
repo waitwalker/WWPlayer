@@ -1,0 +1,6 @@
+framework module Pods_WWPlayer_WWPlayerUITests {
+  umbrella header "Pods-WWPlayer-WWPlayerUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
